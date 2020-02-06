@@ -77,6 +77,9 @@ export function getPageLayoutDraggableItems(): itemLayer {
     ]
 }
 
+export const CALENDAR_PADDING_RIGHT = 10;
+export const CALENDAR_PADDING_TOP = 5;
+
 export function getPageLayoutCalendar(): CalendarLayer {
     return [
         {

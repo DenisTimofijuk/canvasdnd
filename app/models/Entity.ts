@@ -1,5 +1,11 @@
 import { TileName } from './SpriteSheet';
 
+const CHILDREN_OFFSET_TOP = 25;
+const CHILDREN_OFFSET_LEFT = 15;
+const CHILDREN_OFFSET_RIGHT = 25;
+const CHILDREN_OFFSET_BOTTOM = 15;
+const CHILDREN_SIZE = 15;
+
 export class Entity {
   image: HTMLCanvasElement;
   x: number;
@@ -8,7 +14,6 @@ export class Entity {
   width: number;
   height: number;
   childs: Array<Entity>;
-  path: Path2D;
   EXPAND_SIZE: number;
 
   constructor(
@@ -27,7 +32,6 @@ export class Entity {
     this.y = y;
     this.childs = [];
     this.EXPAND_SIZE = 0;
-    this.path = new Path2D(); //not supported with IE
   }
 
   draw(ctx: CanvasRenderingContext2D) {
@@ -35,16 +39,19 @@ export class Entity {
     const y = this.y - this.EXPAND_SIZE;
     const width = this.width + this.EXPAND_SIZE;
     const height = this.height + this.EXPAND_SIZE;
-    this.path.rect(x, y, width, height);
     ctx.drawImage(this.image, x, y, width, height);
+
+    //ctx.rect(x, y, width, height);
+    //ctx.stroke(); //TEST
+
     this.drawChildrens(ctx);
   }
 
-  hoverOver(){
+  hoverOver() {
     this.EXPAND_SIZE = 1;
   }
 
-  hoverOut(){
+  hoverOut() {
     this.EXPAND_SIZE = 0;
   }
 
@@ -58,23 +65,20 @@ export class Entity {
   }
 
   drawChildrens(ctx: CanvasRenderingContext2D) {
-    const OFFSET_TOP = 25;
-    const OFFSET_LEFT = 15;
-    const OFFSET_RIGHT = 25;
-    const OFFSET_BOTTOM = 15;
-    const x_start = this.x + OFFSET_LEFT;
-    const y_start = this.y + OFFSET_TOP;
-    const boxHeight = this.height - OFFSET_BOTTOM - OFFSET_TOP;
-    const rowLen = this.width - OFFSET_RIGHT - OFFSET_LEFT;
-    const size = 15;
+    const x_start = this.x + CHILDREN_OFFSET_LEFT;
+    const y_start = this.y + CHILDREN_OFFSET_TOP;
+    const boxHeight = this.height - CHILDREN_OFFSET_BOTTOM - CHILDREN_OFFSET_TOP;
+    const rowLen = this.width - CHILDREN_OFFSET_RIGHT - CHILDREN_OFFSET_LEFT;
 
-    this.childs.forEach((entity, index) => {
-      const x = (index * size) % rowLen;
-      const y = Math.floor((index * size) / rowLen) * size;
-      if (y <= boxHeight - size) {
-        ctx.drawImage(entity.image, x_start + x, y_start + y, size, size);
+    for (let index = 0; index < this.childs.length; index++) {
+      let entity = this.childs[index];
+      const x = (index * CHILDREN_SIZE) % rowLen;
+      const y = Math.floor((index * CHILDREN_SIZE) / rowLen) * CHILDREN_SIZE;
+      if (y > boxHeight - CHILDREN_SIZE) {
+        break;
       }
-    });
+      ctx.drawImage(entity.image, x_start + x, y_start + y, CHILDREN_SIZE, CHILDREN_SIZE);
+    }
   }
 
   addChild(element: Entity) {

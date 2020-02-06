@@ -1,6 +1,6 @@
 import { TileName, SpriteSheet } from "./SpriteSheet";
 import { Entity } from "./Entity";
-import { getPageLayoutItems, getPageLayoutCalendar, getPageLayoutDraggableItems, itemLayer, CalendarLayer } from "./layout";
+import { getPageLayoutItems, getPageLayoutCalendar, getPageLayoutDraggableItems, itemLayer, CalendarLayer, CALENDAR_PADDING_RIGHT, CALENDAR_PADDING_TOP } from "./layout";
 
 export type LayerNames = 'patient' | 'calendar' | 'draggable' | 'draging';
 
@@ -47,9 +47,9 @@ function getCalendarLayerElements(calendarItems: CalendarLayer, sprites: SpriteS
         layer.push(
           new Entity(name, image, x, y, element.w, element.h)
         );
-        x += element.w + 10;
+        x += element.w + CALENDAR_PADDING_RIGHT;
       }
-      y += element.h + 5;
+      y += element.h + CALENDAR_PADDING_TOP;
     }
   });
 

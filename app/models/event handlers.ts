@@ -1,18 +1,21 @@
 import { Entity } from "./Entity";
-import { getEntityByCoordinates, cursorHandler } from "./helpers";
-import { LayerNames } from "./createLayers";
-import { CanvasCalendar } from "../app";
+import { getEntityByCoordinates } from "./helpers";
+import Compositor from "./compositor";
+import Grid from "./grid";
 
 export default class EventsHandler {
-    canvasCalendar: CanvasCalendar;
     flag: boolean;
     deltaX: number;
     deltaY: number;
     draggableLayer: Array<Entity>;
-    onHover: (e: MouseEvent) => void;
     previousEntity: Entity;
-    constructor(canvasCalendar: CanvasCalendar) {
-        this.canvasCalendar = canvasCalendar;
+    compositor: Compositor;
+    canvas: HTMLCanvasElement;
+    gridDrop: Grid;
+    constructor(canvas:HTMLCanvasElement, compositor:Compositor, gridDrop:Grid) {
+        this.gridDrop = gridDrop;
+        this.canvas = canvas;
+        this.compositor = compositor;
         this.flag = true;
         this.deltaX = 0;
         this.deltaY = 0;
@@ -22,72 +25,102 @@ export default class EventsHandler {
 
     define() {
         const _this = this;
-        ['mousedown', 'mousemove', 'mouseup'].forEach(eventName => {
-            _this.canvasCalendar.canvas.addEventListener(eventName, e => _this.update(e as MouseEvent));
+        ['mousedown', 'mousemove', 'mouseup', 'touchstart', 'touchend', 'touchmove'].forEach(eventName => {
+            _this.canvas.addEventListener(eventName, e => _this.update(e as MouseEvent | TouchEvent));
         })
-        this.canvasCalendar.grid.set('draging', this.draggableLayer);
+        this.compositor.layers.set('draging', this.draggableLayer);
     }
 
-    update(e: MouseEvent) {
+    update(e: MouseEvent | TouchEvent) {
+        e.preventDefault();
         switch (e.type) {
+            case 'touchstart':
             case 'mousedown':
-                this.getItem(e);
+                this.getDraggable(e);
                 break;
+            case 'touchmove':
             case 'mousemove':
                 this.moveItem(e);
-                this.animationHandler(e);
                 break;
+            case 'touchend':
             case 'mouseup':
-                this.fnishDrag(e);
+                this.appendToDroppable(e);
                 break;
         }
     }
 
-    getItem(e: MouseEvent) {
-        if (e.button === 0 && e.buttons === 1 && this.flag) {
-            const availableEntity = getEntityByCoordinates(this.canvasCalendar.grid.get('draggable'), e);
-            if (availableEntity !== undefined) {
-                const draggable = new Entity(
-                    availableEntity.name,
-                    availableEntity.image,
-                    availableEntity.x,
-                    availableEntity.y,
-                    availableEntity.width,
-                    availableEntity.height
-                );
-                this.deltaX = e.offsetX - availableEntity.x;
-                this.deltaY = e.offsetY - availableEntity.y;
-                this.flag = false;
-                this.draggableLayer.push(draggable);
-            }
+    getDraggable(e: MouseEvent | TouchEvent) {
+        const touchE = e as TouchEvent;
+        const clickE = e as MouseEvent;
+        if (touchE.type === 'touchstart' && !this.flag || clickE.type === 'mousedown' && !(clickE.button === 0 && clickE.buttons === 1 && this.flag)) {
+            return;
         }
+
+        let x, y;
+        if (e.type === 'touchstart') {
+            x = touchE.touches[0].clientX;
+            y = touchE.touches[0].clientY;
+        } else {
+            x = clickE.offsetX;
+            y = clickE.offsetY;
+        }
+
+        const availableEntity = getEntityByCoordinates(this.compositor.layers.get('draggable'), x, y);
+        if (availableEntity !== undefined) {
+            const draggable = new Entity(
+                availableEntity.name,
+                availableEntity.image,
+                availableEntity.x,
+                availableEntity.y,
+                availableEntity.width,
+                availableEntity.height
+            );
+            this.deltaX = x - availableEntity.x;
+            this.deltaY = y - availableEntity.y;
+            this.flag = false;
+            this.draggableLayer.push(draggable);
+        }
+
     }
 
-    animationHandler(e: MouseEvent) {
-        const grid = this.canvasCalendar.grid;
-        const availableEntity = getEntityByCoordinates(grid.get('calendar'), e);
-        if (availableEntity) {
-            this.previousEntity = availableEntity;
-            availableEntity.hoverOver();
-        } else if (this.previousEntity) {
-            this.previousEntity.hoverOut();
-        }
-    }
-
-    moveItem(e: MouseEvent) {
+    moveItem(e: MouseEvent | TouchEvent) {
         const _this = this;
+        const touchE = e as TouchEvent;
+        const clickE = e as MouseEvent;
+
+        let x:number, y:number;
+        if (e.type === 'touchmove') {
+            x = touchE.touches[0].clientX;
+            y = touchE.touches[0].clientY;
+        } else {
+            x = clickE.offsetX;
+            y = clickE.offsetY;
+        }
+
         if (this.draggableLayer.length > 0) {
             this.draggableLayer.forEach(entity => {
-                entity.x = e.offsetX - _this.deltaX;
-                entity.y = e.offsetY - _this.deltaY;
+                entity.x = x - _this.deltaX;
+                entity.y = y - _this.deltaY;
             })
         } else {
-            cursorHandler(e, this.canvasCalendar.canvas, this.canvasCalendar.grid);
+            //cursorHandler(this.canvasCalendar.canvas, this.canvasCalendar.compositor, x, y);
         }
     }
 
-    fnishDrag(e: MouseEvent) {
-        const availableEntity = getEntityByCoordinates(this.canvasCalendar.grid.get('calendar'), e);
+    appendToDroppable(e: MouseEvent | TouchEvent) {
+        const touchE = e as TouchEvent;
+        const clickE = e as MouseEvent;
+
+        let x:number, y:number;
+        if (e.type === 'touchend') {
+            x = touchE.changedTouches[0].clientX;
+            y = touchE.changedTouches[0].clientY;
+        } else {
+            x = clickE.offsetX;
+            y = clickE.offsetY;
+        }
+        
+        const availableEntity = this.gridDrop.get(x, y);
         if (availableEntity && this.draggableLayer.length > 0) {
             this.draggableLayer.forEach(entity => availableEntity.addChild(entity));
         }

@@ -4,6 +4,8 @@ import { Entity } from './models/Entity';
 import { createLayers, LayerNames } from './models/createLayers';
 import { loadTiles } from './models/tileLoader';
 import EventsHandler from './models/event handlers';
+import Compositor from './models/compositor';
+import Grid from './models/grid';
 
 
 type MainObject = {
@@ -16,12 +18,16 @@ export class CanvasCalendar {
   placeHolder: HTMLElement;
   standBy: HTMLDivElement;
   sprites: SpriteSheet;
-  grid: Map<LayerNames, Array<Entity>>;
   canvas: HTMLCanvasElement;
   ctx: CanvasRenderingContext2D;
+  compositor: Compositor;
+  gridDrop: Grid;
 
   constructor() {
     const placeHolderID = 'cdnd_placeHolder';
+    this.canvas = document.createElement('canvas');
+    this.canvas.width = 800;
+    this.canvas.height = 600;
     this.placeHolder = document.getElementById(placeHolderID);
     this.standBy = getPleaseWait('Loading Please wait...');
     this.placeHolder.appendChild(this.standBy);
@@ -29,7 +35,10 @@ export class CanvasCalendar {
 
     this.initLoader().then(loadTile => {
       loadTiles(loadTile);
-      _this.initGrid();
+      _this.initCompositor();
+      _this.initDroppableGrid();
+      _this.initEventHandler();
+      _this.update();
     });
   }
 
@@ -37,7 +46,6 @@ export class CanvasCalendar {
     const image = await loadImage(
       './img/CanvasDnD.png'
     );
-    this.placeHolder.removeChild(this.standBy);
     this.sprites = new SpriteSheet(image);
     const _this = this;
 
@@ -52,35 +60,26 @@ export class CanvasCalendar {
     };
   }
 
-  initGrid() {
-    this.grid = createLayers(this.sprites);
-    this.canvas = document.createElement('canvas');
-    this.canvas.width = 800;
-    this.canvas.height = 600;
+  initCompositor() {
+    this.compositor = new Compositor(this.sprites, this.canvas);
+
+    this.placeHolder.removeChild(this.standBy);
     this.placeHolder.appendChild(this.canvas);
     this.ctx = this.canvas.getContext('2d');
-    this.drawTiles();
-    this.initEventHandler();
   }
 
-  drawTiles() {
-    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    const _this = this;
-    this.grid.forEach(layer => {
-      layer.forEach(entity => {
-        entity.draw(_this.ctx);
-      });
-    });
+  initDroppableGrid(){
+    const calendar = this.compositor.layers.get('calendar');
+    this.gridDrop = new Grid(calendar);
   }
 
   update(){
-    this.drawTiles();
+    this.compositor.draw();
     window.requestAnimationFrame(() => {this.update()});
   }
 
   initEventHandler() {
-    new EventsHandler(this);
-    this.update();
+    new EventsHandler(this.canvas, this.compositor, this.gridDrop);
   }
 }
 
