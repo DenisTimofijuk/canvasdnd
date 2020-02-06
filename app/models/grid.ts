@@ -26,7 +26,7 @@ export default class Grid {
         })
     }
 
-    get(x:number, y:number):Entity | undefined{
+    getEntity(x:number, y:number):Entity | undefined{
         const index_x = Math.floor(x / this.w) % this.w;
         const index_y = (Math.floor(y / this.h) % this.h) - 1; //y index is 1 too bog
         if(this.grid[index_x]){
@@ -39,3 +39,5 @@ export default class Grid {
         }
     }
 }
+
+//GRID layers mismaches with Entity Layers

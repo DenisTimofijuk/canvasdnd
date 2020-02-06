@@ -13,6 +13,7 @@ type MainObject = {
   referenceQIDs: Array<string>;
 };
 type MainParams = Array<MainObject>;
+export type GridName = 'drop' | 'drag'
 
 export class CanvasCalendar {
   placeHolder: HTMLElement;
@@ -21,7 +22,7 @@ export class CanvasCalendar {
   canvas: HTMLCanvasElement;
   ctx: CanvasRenderingContext2D;
   compositor: Compositor;
-  gridDrop: Grid;
+  grid: Map<GridName, Grid>
 
   constructor() {
     const placeHolderID = 'cdnd_placeHolder';
@@ -31,6 +32,7 @@ export class CanvasCalendar {
     this.placeHolder = document.getElementById(placeHolderID);
     this.standBy = getPleaseWait('Loading Please wait...');
     this.placeHolder.appendChild(this.standBy);
+    this.grid = new Map();
     const _this = this;
 
     this.initLoader().then(loadTile => {
@@ -70,7 +72,9 @@ export class CanvasCalendar {
 
   initDroppableGrid(){
     const calendar = this.compositor.layers.get('calendar');
-    this.gridDrop = new Grid(calendar);
+    const draggable = this.compositor.layers.get('draggable');
+    this.grid.set('drop', new Grid(calendar));
+    this.grid.set('drag', new Grid(draggable));
   }
 
   update(){
@@ -79,7 +83,7 @@ export class CanvasCalendar {
   }
 
   initEventHandler() {
-    new EventsHandler(this.canvas, this.compositor, this.gridDrop);
+    new EventsHandler(this.canvas, this.compositor, this.grid);
   }
 }
 

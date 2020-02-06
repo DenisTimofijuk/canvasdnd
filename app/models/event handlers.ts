@@ -1,7 +1,8 @@
 import { Entity } from "./Entity";
-import { getEntityByCoordinates } from "./helpers";
+import { getEntityByCoordinates, cursorHandler } from "./helpers";
 import Compositor from "./compositor";
 import Grid from "./grid";
+import { GridName } from "../app";
 
 export default class EventsHandler {
     flag: boolean;
@@ -11,9 +12,9 @@ export default class EventsHandler {
     previousEntity: Entity;
     compositor: Compositor;
     canvas: HTMLCanvasElement;
-    gridDrop: Grid;
-    constructor(canvas:HTMLCanvasElement, compositor:Compositor, gridDrop:Grid) {
-        this.gridDrop = gridDrop;
+    grid: Map<GridName, Grid>;
+    constructor(canvas:HTMLCanvasElement, compositor:Compositor, grid:Map<GridName, Grid>) {
+        this.grid = grid;
         this.canvas = canvas;
         this.compositor = compositor;
         this.flag = true;
@@ -103,7 +104,7 @@ export default class EventsHandler {
                 entity.y = y - _this.deltaY;
             })
         } else {
-            //cursorHandler(this.canvasCalendar.canvas, this.canvasCalendar.compositor, x, y);
+            cursorHandler(_this.canvas, _this.grid, x, y);
         }
     }
 
@@ -120,7 +121,7 @@ export default class EventsHandler {
             y = clickE.offsetY;
         }
         
-        const availableEntity = this.gridDrop.get(x, y);
+        const availableEntity = this.grid.get('drop').getEntity(x, y);
         if (availableEntity && this.draggableLayer.length > 0) {
             this.draggableLayer.forEach(entity => availableEntity.addChild(entity));
         }
