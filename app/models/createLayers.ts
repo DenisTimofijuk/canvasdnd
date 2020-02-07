@@ -2,7 +2,7 @@ import { TileName, SpriteSheet } from "./SpriteSheet";
 import { Entity } from "./Entity";
 import { getPageLayoutItems, getPageLayoutCalendar, getPageLayoutDraggableItems, itemLayer, CalendarLayer, CALENDAR_PADDING_RIGHT, CALENDAR_PADDING_TOP } from "./layout";
 
-export type LayerNames = 'patient' | 'calendar' | 'draggable' | 'draging';
+export type LayerNames = 'patient' | 'calendar' | 'draggable' | 'draging' | 'grid';
 
 export function createLayers(sprites: SpriteSheet) {
   const layers:Map<LayerNames, Array<Entity>> = new Map();

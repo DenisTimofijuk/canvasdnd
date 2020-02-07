@@ -30,6 +30,7 @@ export default class EventsHandler {
             _this.canvas.addEventListener(eventName, e => _this.update(e as MouseEvent | TouchEvent));
         })
         this.compositor.layers.set('draging', this.draggableLayer);
+        this.compositor.addBuffer('draging');
     }
 
     update(e: MouseEvent | TouchEvent) {
@@ -106,6 +107,8 @@ export default class EventsHandler {
         } else {
             cursorHandler(_this.canvas, _this.grid, x, y);
         }
+
+        this.compositor.updateBufferLayer('draging');
     }
 
     appendToDroppable(e: MouseEvent | TouchEvent) {

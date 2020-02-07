@@ -40,6 +40,7 @@ export class CanvasCalendar {
       _this.initCompositor();
       _this.initDroppableGrid();
       _this.initEventHandler();
+      _this.test();
       _this.update();
     });
   }
@@ -77,7 +78,21 @@ export class CanvasCalendar {
     this.grid.set('drag', new Grid(draggable));
   }
 
+  test(){
+    this.compositor.addBuffer('grid');
+    const gridBufferCanv = this.compositor.buffers.get('grid');
+    const gridBufferCtx = gridBufferCanv.getContext('2d');
+    this.grid.get('drag').test(gridBufferCtx);
+    this.grid.get('drop').test(gridBufferCtx);
+  }
+
   update(){
+
+    // const _this = this;
+    // setInterval(function(){
+    //   _this.compositor.draw();
+    // }, 1000)
+
     this.compositor.draw();
     window.requestAnimationFrame(() => {this.update()});
   }

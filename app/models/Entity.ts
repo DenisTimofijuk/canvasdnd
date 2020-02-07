@@ -41,8 +41,11 @@ export class Entity {
     const height = this.height + this.EXPAND_SIZE;
     ctx.drawImage(this.image, x, y, width, height);
 
-    //ctx.rect(x, y, width, height);
-    //ctx.stroke(); //TEST
+    //>> test
+    ctx.strokeStyle = "red";
+    ctx.rect(x, y, width, height);
+    ctx.stroke();
+    //<< test
 
     this.drawChildrens(ctx);
   }

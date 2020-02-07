@@ -38,6 +38,19 @@ export default class Grid {
             }
         }
     }
+
+    test(ctx:CanvasRenderingContext2D){
+        const _this = this;
+        this.grid.forEach((col, colindex) => {
+            col.forEach((entity, rowindex) => {
+                let x = colindex * _this.w;
+                let y = rowindex * _this.h;
+                ctx.strokeStyle = "green";
+                ctx.rect(x, y, _this.w, _this.h)
+                ctx.stroke();
+            })
+        })
+    }
 }
 
 //GRID layers mismaches with Entity Layers
