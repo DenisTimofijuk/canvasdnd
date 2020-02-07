@@ -6,6 +6,8 @@ export default class Grid {
     grid: Entity[][];
     w: number;
     h: number;
+    trim_x:number;
+    trim_y:number;
     constructor(entities: Array<Entity>) {
         this.entities = entities;
         this.grid = [];
@@ -18,17 +20,17 @@ export default class Grid {
             _this.w = entity.width + CALENDAR_PADDING_RIGHT;
             _this.h = entity.height + CALENDAR_PADDING_TOP;
             const index_x = Math.floor(entity.x / _this.w) % _this.w;
-            const index_y = Math.floor(entity.y / _this.h) % _this.h
-            if (!this.grid[index_x]) {
-                this.grid[index_x] = [];
+            const index_y = Math.floor(entity.y / _this.h) % _this.h;
+            if (!_this.grid[index_x]) {
+                _this.grid[index_x] = [];
             }
-            this.grid[index_x][index_y] = entity;
+            _this.grid[index_x][index_y] = entity;
         })
     }
 
     getEntity(x:number, y:number):Entity | undefined{
         const index_x = Math.floor(x / this.w) % this.w;
-        const index_y = (Math.floor(y / this.h) % this.h) - 1; //y index is 1 too bog
+        const index_y = (Math.floor(y / this.h) % this.h);
         if(this.grid[index_x]){
             if(this.grid[index_x][index_y]){
                 const entity = this.grid[index_x][index_y];
@@ -39,18 +41,18 @@ export default class Grid {
         }
     }
 
-    test(ctx:CanvasRenderingContext2D){
+    debug(ctx:CanvasRenderingContext2D){
         const _this = this;
         this.grid.forEach((col, colindex) => {
             col.forEach((entity, rowindex) => {
                 let x = colindex * _this.w;
                 let y = rowindex * _this.h;
+                ctx.beginPath()
                 ctx.strokeStyle = "green";
                 ctx.rect(x, y, _this.w, _this.h)
                 ctx.stroke();
+                ctx.closePath();
             })
         })
     }
 }
-
-//GRID layers mismaches with Entity Layers

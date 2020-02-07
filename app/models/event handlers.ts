@@ -67,7 +67,7 @@ export default class EventsHandler {
             y = clickE.offsetY;
         }
 
-        const availableEntity = getEntityByCoordinates(this.compositor.layers.get('draggable'), x, y);
+        const availableEntity = this.grid.get('drag').getEntity(x, y);
         if (availableEntity !== undefined) {
             const draggable = new Entity(
                 availableEntity.name,

@@ -1,3 +1,8 @@
+//PLEASE NOTE
+// PLACING ITEMS ON THE SCREEN NEEDS TO BE VERY PRECISE WITH THE COORDINATES
+// THEY SHOULD ALLIGN WITH THE GRID.
+// TO TEST PLEASE USE displayBorderForTest();
+
 import { TileName } from "./SpriteSheet";
 
 export type itemLayer = Array<{
@@ -21,8 +26,8 @@ export function getPageLayoutItems(): itemLayer {
     return [
         {
             name: "woman1",
-            x: 0,
-            y: 0,
+            x: 5,
+            y: 5,
             w: 100,
             h: 200
         }
@@ -34,43 +39,43 @@ export function getPageLayoutDraggableItems(): itemLayer {
 
         {
             name: "pen",
-            x: 411,
-            y: 11,
+            x: 355,
+            y: 5,
             w: 60,
             h: 60
         },
         {
             name: "pen",
-            x: 411,
-            y: 97,
+            x: 355,
+            y: 70,
             w: 60,
             h: 60
         },
         {
             name: "pen",
-            x: 411,
-            y: 164,
+            x: 355,
+            y: 135,
             w: 60,
             h: 60
         },
         {
             name: "hand",
-            x: 620,
-            y: 12,
+            x: 495,
+            y: 5,
             w: 60,
             h: 60
         },
         {
             name: "hand",
-            x: 549,
-            y: 80,
+            x: 495,
+            y: 70,
             w: 60,
             h: 60
         },
         {
             name: "hand",
-            x: 633,
-            y: 133,
+            x: 495,
+            y: 135,
             w: 60,
             h: 60
         }
@@ -86,8 +91,8 @@ export function getPageLayoutCalendar(): CalendarLayer {
             name: "calendar",
             columns: 7,
             rows: 4,
-            x: 26,
-            y: 280,
+            x: 11,
+            y: 300,
             w: 70,
             h: 70
         }

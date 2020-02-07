@@ -34,17 +34,15 @@ export class Entity {
     this.EXPAND_SIZE = 0;
   }
 
-  draw(ctx: CanvasRenderingContext2D) {
+  draw(ctx: CanvasRenderingContext2D, debug?:boolean) {
     const x = this.x - this.EXPAND_SIZE;
     const y = this.y - this.EXPAND_SIZE;
     const width = this.width + this.EXPAND_SIZE;
     const height = this.height + this.EXPAND_SIZE;
     ctx.drawImage(this.image, x, y, width, height);
-
-    //>> test
-    drawBorder(ctx, x, y, width, height);
-    //<< test
-
+    if(debug){
+      drawBorder(ctx, x, y, width, height);
+    }
     this.drawChildrens(ctx);
   }
 

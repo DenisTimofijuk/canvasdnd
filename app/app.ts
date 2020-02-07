@@ -1,7 +1,5 @@
 import { loadImage, getPleaseWait } from './models/loaders';
 import { SpriteSheet, TileName } from './models/SpriteSheet';
-import { Entity } from './models/Entity';
-import { createLayers, LayerNames } from './models/createLayers';
 import { loadTiles } from './models/tileLoader';
 import EventsHandler from './models/event handlers';
 import Compositor from './models/compositor';
@@ -23,11 +21,15 @@ export class CanvasCalendar {
   ctx: CanvasRenderingContext2D;
   compositor: Compositor;
   grid: Map<GridName, Grid>
+  debug_grid: boolean;
+  debug_entity: boolean;
 
   constructor() {
+    this.debug_grid = false;
+    this.debug_entity = false;
     const placeHolderID = 'cdnd_placeHolder';
     this.canvas = document.createElement('canvas');
-    this.canvas.width = 800;
+    this.canvas.width = 600;
     this.canvas.height = 600;
     this.placeHolder = document.getElementById(placeHolderID);
     this.standBy = getPleaseWait('Loading Please wait...');
@@ -40,7 +42,7 @@ export class CanvasCalendar {
       _this.initCompositor();
       _this.initDroppableGrid();
       _this.initEventHandler();
-      _this.test();
+      _this.displayGridForDebugging(_this.debug_grid);
       _this.update();
     });
   }
@@ -64,8 +66,7 @@ export class CanvasCalendar {
   }
 
   initCompositor() {
-    this.compositor = new Compositor(this.sprites, this.canvas);
-
+    this.compositor = new Compositor(this.sprites, this.canvas, this.debug_entity);
     this.placeHolder.removeChild(this.standBy);
     this.placeHolder.appendChild(this.canvas);
     this.ctx = this.canvas.getContext('2d');
@@ -74,25 +75,22 @@ export class CanvasCalendar {
   initDroppableGrid(){
     const calendar = this.compositor.layers.get('calendar');
     const draggable = this.compositor.layers.get('draggable');
-    this.grid.set('drop', new Grid(calendar));
     this.grid.set('drag', new Grid(draggable));
+    this.grid.set('drop', new Grid(calendar));
   }
 
-  test(){
+  displayGridForDebugging(flag:boolean){
+    if(!flag){
+      return;
+    }
     this.compositor.addBuffer('grid');
     const gridBufferCanv = this.compositor.buffers.get('grid');
     const gridBufferCtx = gridBufferCanv.getContext('2d');
-    this.grid.get('drag').test(gridBufferCtx);
-    this.grid.get('drop').test(gridBufferCtx);
+    this.grid.get('drag').debug(gridBufferCtx);
+    this.grid.get('drop').debug(gridBufferCtx);
   }
 
   update(){
-
-    // const _this = this;
-    // setInterval(function(){
-    //   _this.compositor.draw();
-    // }, 1000)
-
     this.compositor.draw();
     window.requestAnimationFrame(() => {this.update()});
   }

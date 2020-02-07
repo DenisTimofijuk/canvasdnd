@@ -8,7 +8,9 @@ export default class Compositor {
     layers: Map<LayerNames, Array<Entity>>;
     ctx: CanvasRenderingContext2D;
     buffers: Map<LayerNames, HTMLCanvasElement>;
-    constructor(sprites: SpriteSheet, canvas: HTMLCanvasElement) {
+    debug: boolean;
+    constructor(sprites: SpriteSheet, canvas: HTMLCanvasElement, debug?:boolean) {
+        this.debug = debug !== undefined ? debug : false;
         this.canvas = canvas;
         this.buffers = new Map();
         this.ctx = canvas.getContext('2d');
@@ -36,7 +38,8 @@ export default class Compositor {
         const bufferCanv = this.buffers.get(name);
         const bufferCtx = bufferCanv.getContext('2d');
         bufferCtx.clearRect(0, 0, bufferCanv.width, bufferCanv.height);
-        this.layers.get(name).forEach(entity => entity.draw(bufferCtx));
+        const _this = this;
+        this.layers.get(name).forEach(entity => entity.draw(bufferCtx, _this.debug));
     }
 
     draw() {
