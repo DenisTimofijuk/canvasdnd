@@ -42,9 +42,7 @@ export class Entity {
     ctx.drawImage(this.image, x, y, width, height);
 
     //>> test
-    ctx.strokeStyle = "red";
-    ctx.rect(x, y, width, height);
-    ctx.stroke();
+    drawBorder(ctx, x, y, width, height);
     //<< test
 
     this.drawChildrens(ctx);
@@ -80,11 +78,25 @@ export class Entity {
       if (y > boxHeight - CHILDREN_SIZE) {
         break;
       }
-      ctx.drawImage(entity.image, x_start + x, y_start + y, CHILDREN_SIZE, CHILDREN_SIZE);
+      ctx.drawImage(
+        entity.image,
+        x_start + x,
+        y_start + y,
+        CHILDREN_SIZE,
+        CHILDREN_SIZE
+      );
     }
   }
 
   addChild(element: Entity) {
     this.childs.push(element);
   }
+}
+
+function drawBorder(ctx:CanvasRenderingContext2D, x:number, y:number, width:number, height:number) {
+  ctx.beginPath();
+  ctx.strokeStyle = 'red';
+  ctx.rect(x, y, width, height);
+  ctx.stroke();
+  ctx.closePath();
 }

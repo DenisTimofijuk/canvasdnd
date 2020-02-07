@@ -104,11 +104,10 @@ export default class EventsHandler {
                 entity.x = x - _this.deltaX;
                 entity.y = y - _this.deltaY;
             })
+            this.compositor.updateBufferLayer('draging');
         } else {
             cursorHandler(_this.canvas, _this.grid, x, y);
-        }
-
-        this.compositor.updateBufferLayer('draging');
+        }        
     }
 
     appendToDroppable(e: MouseEvent | TouchEvent) {
@@ -132,5 +131,8 @@ export default class EventsHandler {
         this.deltaX = 0;
         this.deltaY = 0;
         this.flag = true;
+
+        this.compositor.updateBufferLayer('calendar');
+        this.compositor.updateBufferLayer('draging');
     }
 }
