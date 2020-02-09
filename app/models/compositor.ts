@@ -1,13 +1,13 @@
 import { SpriteSheet } from "./SpriteSheet";
-import { createLayers, LayerNames } from "./createLayers";
+import { createLayers } from "./createLayers";
 import { Entity } from "./Entity";
-import { getPageLayoutCalendar } from "./layout";
+import { LayerType } from "./layout";
 
 export default class Compositor {
     canvas: HTMLCanvasElement;
-    layers: Map<LayerNames, Array<Entity>>;
+    layers: Map<LayerType, Array<Entity>>;
     ctx: CanvasRenderingContext2D;
-    buffers: Map<LayerNames, HTMLCanvasElement>;
+    buffers: Map<LayerType, HTMLCanvasElement>;
     debug: boolean;
     constructor(sprites: SpriteSheet, canvas: HTMLCanvasElement, debug?:boolean) {
         this.debug = debug !== undefined ? debug : false;
@@ -23,7 +23,7 @@ export default class Compositor {
         this.layers.forEach((layer, name) => _this.addBuffer(name))
     }
 
-    addBuffer(name: LayerNames) {
+    addBuffer(name: LayerType) {
         const bufferCanvas = document.createElement('canvas');
         bufferCanvas.width = this.canvas.width;
         bufferCanvas.height = this.canvas.height;
@@ -31,7 +31,7 @@ export default class Compositor {
         this.updateBufferLayer(name);
     }
 
-    updateBufferLayer(name: LayerNames) {
+    updateBufferLayer(name: LayerType) {
         if(!this.buffers.has(name) || !this.layers.has(name)){
             return;
         }

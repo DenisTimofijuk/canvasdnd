@@ -1,9 +1,9 @@
 import { loadImage, getPleaseWait } from './models/loaders';
-import { SpriteSheet, TileName } from './models/SpriteSheet';
-import { loadTiles } from './models/tileLoader';
+import { SpriteSheet } from './models/SpriteSheet';
 import EventsHandler from './models/event handlers';
 import Compositor from './models/compositor';
 import Grid from './models/grid';
+import { defineTiles, TileName } from './models/layout';
 
 
 type MainObject = {
@@ -38,9 +38,9 @@ export class CanvasCalendar {
     const _this = this;
 
     this.initLoader().then(loadTile => {
-      loadTiles(loadTile);
+      defineTiles().forEach(tile => loadTile(tile.name, tile.x, tile.y, tile.w, tile.h));
       _this.initCompositor();
-      _this.initDroppableGrid();
+      _this.initGrid();
       _this.initEventHandler();
       _this.displayGridForDebugging(_this.debug_grid);
       _this.update();
@@ -72,9 +72,9 @@ export class CanvasCalendar {
     this.ctx = this.canvas.getContext('2d');
   }
 
-  initDroppableGrid(){
-    const calendar = this.compositor.layers.get('calendar');
-    const draggable = this.compositor.layers.get('draggable');
+  initGrid(){
+    const calendar = this.compositor.layers.get('drop');
+    const draggable = this.compositor.layers.get('drag');
     this.grid.set('drag', new Grid(draggable));
     this.grid.set('drop', new Grid(calendar));
   }

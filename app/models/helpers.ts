@@ -1,5 +1,4 @@
 import { Entity } from './Entity';
-import { LayerNames } from './createLayers';
 import { GridName } from '../app';
 import Grid from './grid';
 

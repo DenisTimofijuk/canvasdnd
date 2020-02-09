@@ -1,4 +1,4 @@
-import { TileName } from './SpriteSheet';
+import { TileName } from "./layout";
 
 const CHILDREN_OFFSET_TOP = 25;
 const CHILDREN_OFFSET_LEFT = 15;

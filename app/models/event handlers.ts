@@ -29,8 +29,8 @@ export default class EventsHandler {
         ['mousedown', 'mousemove', 'mouseup', 'touchstart', 'touchend', 'touchmove'].forEach(eventName => {
             _this.canvas.addEventListener(eventName, e => _this.update(e as MouseEvent | TouchEvent));
         })
-        this.compositor.layers.set('draging', this.draggableLayer);
-        this.compositor.addBuffer('draging');
+        this.compositor.layers.set('draggable', this.draggableLayer);
+        this.compositor.addBuffer('draggable');
     }
 
     update(e: MouseEvent | TouchEvent) {
@@ -104,7 +104,7 @@ export default class EventsHandler {
                 entity.x = x - _this.deltaX;
                 entity.y = y - _this.deltaY;
             })
-            this.compositor.updateBufferLayer('draging');
+            this.compositor.updateBufferLayer('draggable');
         } else {
             cursorHandler(_this.canvas, _this.grid, x, y);
         }        
@@ -132,7 +132,7 @@ export default class EventsHandler {
         this.deltaY = 0;
         this.flag = true;
 
-        this.compositor.updateBufferLayer('calendar');
-        this.compositor.updateBufferLayer('draging');
+        this.compositor.updateBufferLayer('drop');
+        this.compositor.updateBufferLayer('draggable');
     }
 }

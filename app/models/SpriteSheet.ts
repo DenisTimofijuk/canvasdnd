@@ -1,4 +1,5 @@
-export type TileName = 'calendar' | 'pen' | 'hand' | 'document' | 'woman1' | 'woman2' | 'woman3' | 'woman4'
+import { TileName } from "./layout";
+
 
 export class SpriteSheet {
     image: HTMLImageElement;
