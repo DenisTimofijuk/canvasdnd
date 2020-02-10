@@ -24,7 +24,7 @@ function getLayerElements(layoutItems: itemLayer, sprites: SpriteSheet): Array<E
     let image = sprites.tiles.get(name);
 
     layer.push(
-      new Entity(name, image, element.x, element.y, element.w, element.h)
+      new Entity(name, image, element.x, element.y, element.val, element.label, element.referanceID, element.w, element.h) //TODO: compress amaoutn of parameters
     );
   });
 

@@ -1,4 +1,4 @@
-import { TileName } from "./layout";
+import { TileName } from './layout';
 
 const CHILDREN_OFFSET_TOP = 25;
 const CHILDREN_OFFSET_LEFT = 15;
@@ -13,6 +13,9 @@ export class Entity {
   name: TileName;
   width: number;
   height: number;
+  val: number;
+  label: string;
+  referanceID: string;
   childs: Array<Entity>;
   EXPAND_SIZE: number;
 
@@ -21,6 +24,9 @@ export class Entity {
     image: HTMLCanvasElement,
     x: number,
     y: number,
+    val: number,
+    label: string,
+    referanceID: string,
     width?: number,
     height?: number
   ) {
@@ -30,17 +36,20 @@ export class Entity {
     this.height = height ? height : image.height;
     this.x = x;
     this.y = y;
+    this.val = val;
+    this.label = label;
+    this.referanceID = referanceID;
     this.childs = [];
     this.EXPAND_SIZE = 0;
   }
 
-  draw(ctx: CanvasRenderingContext2D, debug?:boolean) {
+  draw(ctx: CanvasRenderingContext2D, debug?: boolean) {
     const x = this.x - this.EXPAND_SIZE;
     const y = this.y - this.EXPAND_SIZE;
     const width = this.width + this.EXPAND_SIZE;
     const height = this.height + this.EXPAND_SIZE;
     ctx.drawImage(this.image, x, y, width, height);
-    if(debug){
+    if (debug) {
       drawBorder(ctx, x, y, width, height);
     }
     this.drawChildrens(ctx);
@@ -66,7 +75,8 @@ export class Entity {
   drawChildrens(ctx: CanvasRenderingContext2D) {
     const x_start = this.x + CHILDREN_OFFSET_LEFT;
     const y_start = this.y + CHILDREN_OFFSET_TOP;
-    const boxHeight = this.height - CHILDREN_OFFSET_BOTTOM - CHILDREN_OFFSET_TOP;
+    const boxHeight =
+      this.height - CHILDREN_OFFSET_BOTTOM - CHILDREN_OFFSET_TOP;
     const rowLen = this.width - CHILDREN_OFFSET_RIGHT - CHILDREN_OFFSET_LEFT;
 
     for (let index = 0; index < this.childs.length; index++) {
@@ -91,7 +101,13 @@ export class Entity {
   }
 }
 
-function drawBorder(ctx:CanvasRenderingContext2D, x:number, y:number, width:number, height:number) {
+function drawBorder(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  width: number,
+  height: number
+) {
   ctx.beginPath();
   ctx.strokeStyle = 'red';
   ctx.rect(x, y, width, height);

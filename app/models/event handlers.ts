@@ -1,8 +1,18 @@
 import { Entity } from './Entity';
-import { getEntityByCoordinates, cursorHandler } from './helpers';
+import { cursorHandler } from './helpers';
 import Compositor from './compositor';
 import Grid from './grid';
 import { LayerType } from './layout';
+
+type CallbackType = 'add' | 'remove';
+export type CallbackArguments = {
+  type: CallbackType;
+  activitie: Entity;
+  target: Entity;
+}
+export interface EventCallback {
+  (result: CallbackArguments): void;
+}
 
 export default class EventsHandler {
   flag: boolean;
@@ -13,11 +23,14 @@ export default class EventsHandler {
   compositor: Compositor;
   canvas: HTMLCanvasElement;
   grid: Map<LayerType, Array<Grid>>;
+  callback: EventCallback;
   constructor(
     canvas: HTMLCanvasElement,
     compositor: Compositor,
-    grid: Map<LayerType, Array<Grid>>
+    grid: Map<LayerType, Array<Grid>>,
+    callback: EventCallback
   ) {
+    this.callback = callback;
     this.grid = grid;
     this.canvas = canvas;
     this.compositor = compositor;
@@ -99,6 +112,9 @@ export default class EventsHandler {
           availableEntity.image,
           availableEntity.x,
           availableEntity.y,
+          availableEntity.val,
+          availableEntity.label,
+          availableEntity.referanceID,
           availableEntity.width,
           availableEntity.height
         );
@@ -141,7 +157,7 @@ export default class EventsHandler {
 
     let x: number, y: number;
     if (e.type === 'touchend') {
-      x = touchE.changedTouches[0].clientX;
+      x = touchE.changedTouches[0].clientX; //TODO: touch screen multiple finger at the same time
       y = touchE.changedTouches[0].clientY;
     } else {
       x = clickE.offsetX;
@@ -162,14 +178,24 @@ export default class EventsHandler {
           availableEntity.addChild(entity)
         );
       }
-    });
+    });         
+
+    const activitie = this.draggableLayer[0].elements[0];
+    const availableEntity = availableEntities[0];
 
     this.draggableLayer[0].elements.length = 0;
     this.deltaX = 0;
     this.deltaY = 0;
     this.flag = true;
 
-    this.compositor.updateBufferLayer('drop');
-    this.compositor.updateBufferLayer('draggable');
+    this.fireCallback('add', activitie, availableEntity);
+  }
+
+  fireCallback(type:CallbackType, activitie:Entity, target:Entity){
+    this.callback({
+      type: type,
+      activitie: activitie,
+      target: target
+    })
   }
 }
