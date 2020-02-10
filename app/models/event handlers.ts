@@ -97,16 +97,16 @@ export default class EventsHandler {
       y = clickE.offsetY;
     }
 
-    const availableEntities: Entity[] = [];
+    const availableDraggable: Entity[] = [];
     const _this = this;
     this.grid.get('drag').forEach(gridLayer => {
-      const availableEntity = gridLayer.getEntity(x, y);
-      if (availableEntity) {
-        availableEntities.push(availableEntity);
+      const draggable = gridLayer.getEntity(x, y);
+      if (draggable) {
+        availableDraggable.push(draggable);
       }
     });
-    if (availableEntities.length > 0) {
-      availableEntities.forEach(availableEntity => {
+    if (availableDraggable.length > 0) {
+      availableDraggable.forEach(availableEntity => {
         const draggable = new Entity(
           availableEntity.name,
           availableEntity.image,
@@ -164,31 +164,31 @@ export default class EventsHandler {
       y = clickE.offsetY;
     }
 
-    const availableEntities: Entity[] = [];
+    const availableDroppable: Entity[] = [];
     this.grid.get('drop').forEach(gridLayer => {
-      const availableEntity = gridLayer.getEntity(x, y);
-      if (availableEntity) {
-        availableEntities.push(availableEntity);
+      const droppable = gridLayer.getEntity(x, y);
+      if (droppable) {
+        availableDroppable.push(droppable);
       }
     });
 
-    availableEntities.forEach(availableEntity => {
-      if (availableEntity && this.draggableLayer[0].elements.length > 0) {
+    availableDroppable.forEach(droppable => {
+      if (droppable && this.draggableLayer[0].elements.length > 0) {
         this.draggableLayer[0].elements.forEach(entity =>
-          availableEntity.addChild(entity)
+          droppable.addChild(entity)
         );
       }
     });         
 
     const activitie = this.draggableLayer[0].elements[0];
-    const availableEntity = availableEntities[0];
+    const droppable = availableDroppable[0];
 
     this.draggableLayer[0].elements.length = 0;
     this.deltaX = 0;
     this.deltaY = 0;
     this.flag = true;
 
-    this.fireCallback('add', activitie, availableEntity);
+    this.fireCallback('add', activitie, droppable);
   }
 
   fireCallback(type:CallbackType, activitie:Entity, target:Entity){
