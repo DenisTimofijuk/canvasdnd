@@ -3,15 +3,8 @@ import { SpriteSheet } from './models/SpriteSheet';
 import EventsHandler from './models/event handlers';
 import Compositor from './models/compositor';
 import Grid from './models/grid';
-import { defineTiles, TileName } from './models/layout';
-
-
-type MainObject = {
-  totalQID: string;
-  referenceQIDs: Array<string>;
-};
-type MainParams = Array<MainObject>;
-export type GridName = 'drop' | 'drag'
+import { TileName, LayerType } from './models/layout';
+import { defineTiles } from './models/define tiles';
 
 export class CanvasCalendar {
   placeHolder: HTMLElement;
@@ -20,13 +13,9 @@ export class CanvasCalendar {
   canvas: HTMLCanvasElement;
   ctx: CanvasRenderingContext2D;
   compositor: Compositor;
-  grid: Map<GridName, Grid>
-  debug_grid: boolean;
-  debug_entity: boolean;
+  grid: Map<LayerType, Array<Grid>>;
 
   constructor() {
-    this.debug_grid = false;
-    this.debug_entity = false;
     const placeHolderID = 'cdnd_placeHolder';
     this.canvas = document.createElement('canvas');
     this.canvas.width = 600;
@@ -38,19 +27,19 @@ export class CanvasCalendar {
     const _this = this;
 
     this.initLoader().then(loadTile => {
-      defineTiles().forEach(tile => loadTile(tile.name, tile.x, tile.y, tile.w, tile.h));
+      defineTiles().forEach(tile =>
+        loadTile(tile.name, tile.x, tile.y, tile.w, tile.h)
+      );
       _this.initCompositor();
       _this.initGrid();
       _this.initEventHandler();
-      _this.displayGridForDebugging(_this.debug_grid);
+      _this.displayGridForDebugging();
       _this.update();
     });
   }
 
   async initLoader() {
-    const image = await loadImage(
-      './img/CanvasDnD.png'
-    );
+    const image = await loadImage('./img/CanvasDnD.png');
     this.sprites = new SpriteSheet(image);
     const _this = this;
 
@@ -66,33 +55,49 @@ export class CanvasCalendar {
   }
 
   initCompositor() {
-    this.compositor = new Compositor(this.sprites, this.canvas, this.debug_entity);
+    this.compositor = new Compositor(this.sprites, this.canvas);
     this.placeHolder.removeChild(this.standBy);
     this.placeHolder.appendChild(this.canvas);
     this.ctx = this.canvas.getContext('2d');
   }
 
-  initGrid(){
-    const calendar = this.compositor.layers.get('drop');
-    const draggable = this.compositor.layers.get('drag');
-    this.grid.set('drag', new Grid(draggable));
-    this.grid.set('drop', new Grid(calendar));
+  initGrid() {
+    const gridToLayers: Array<LayerType> = ['drag', 'drop'];
+    const _this = this;
+    gridToLayers.forEach(name =>
+      _this.compositor.layers.get(name).forEach(layer => {
+        if (_this.grid.has(name)) {
+          _this.grid.get(name).push(new Grid(layer.elements));
+        } else {
+          _this.grid.set(name, [new Grid(layer.elements)]);
+        }
+      })
+    );
   }
 
-  displayGridForDebugging(flag:boolean){
-    if(!flag){
-      return;
-    }
+  displayGridForDebugging() {
     this.compositor.addBuffer('grid');
+    const _this = this;
     const gridBufferCanv = this.compositor.buffers.get('grid');
     const gridBufferCtx = gridBufferCanv.getContext('2d');
-    this.grid.get('drag').debug(gridBufferCtx);
-    this.grid.get('drop').debug(gridBufferCtx);
+    this.compositor.layers.forEach((compositorlayer, name) => {
+      compositorlayer.forEach((layer, layerIndex) => {
+        if (layer.debug && _this.grid.has(name)) {
+          _this.grid.get(name).forEach((grid, gridIndex) => {
+            if(layerIndex === gridIndex){
+              grid.debug(gridBufferCtx);
+            };      
+          })
+        }
+      })
+    })
   }
 
-  update(){
+  update() {
     this.compositor.draw();
-    window.requestAnimationFrame(() => {this.update()});
+    window.requestAnimationFrame(() => {
+      this.update();
+    });
   }
 
   initEventHandler() {

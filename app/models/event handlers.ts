@@ -1,138 +1,175 @@
-import { Entity } from "./Entity";
-import { getEntityByCoordinates, cursorHandler } from "./helpers";
-import Compositor from "./compositor";
-import Grid from "./grid";
-import { GridName } from "../app";
+import { Entity } from './Entity';
+import { getEntityByCoordinates, cursorHandler } from './helpers';
+import Compositor from './compositor';
+import Grid from './grid';
+import { LayerType } from './layout';
 
 export default class EventsHandler {
-    flag: boolean;
-    deltaX: number;
-    deltaY: number;
-    draggableLayer: Array<Entity>;
-    previousEntity: Entity;
-    compositor: Compositor;
-    canvas: HTMLCanvasElement;
-    grid: Map<GridName, Grid>;
-    constructor(canvas:HTMLCanvasElement, compositor:Compositor, grid:Map<GridName, Grid>) {
-        this.grid = grid;
-        this.canvas = canvas;
-        this.compositor = compositor;
-        this.flag = true;
-        this.deltaX = 0;
-        this.deltaY = 0;
-        this.draggableLayer = [];
-        this.define();
+  flag: boolean;
+  deltaX: number;
+  deltaY: number;
+  draggableLayer: [{ elements: Array<Entity>; debug: boolean }];
+  previousEntity: Entity;
+  compositor: Compositor;
+  canvas: HTMLCanvasElement;
+  grid: Map<LayerType, Array<Grid>>;
+  constructor(
+    canvas: HTMLCanvasElement,
+    compositor: Compositor,
+    grid: Map<LayerType, Array<Grid>>
+  ) {
+    this.grid = grid;
+    this.canvas = canvas;
+    this.compositor = compositor;
+    this.flag = true;
+    this.deltaX = 0;
+    this.deltaY = 0;
+    this.draggableLayer = [{ elements: [], debug: false }];
+    this.define();
+  }
+
+  define() {
+    const _this = this;
+    [
+      'mousedown',
+      'mousemove',
+      'mouseup',
+      'touchstart',
+      'touchend',
+      'touchmove'
+    ].forEach(eventName => {
+      _this.canvas.addEventListener(eventName, e =>
+        _this.update(e as MouseEvent | TouchEvent)
+      );
+    });
+    this.compositor.layers.set('draggable', this.draggableLayer);
+    this.compositor.addBuffer('draggable');
+  }
+
+  update(e: MouseEvent | TouchEvent) {
+    e.preventDefault();
+    switch (e.type) {
+      case 'touchstart':
+      case 'mousedown':
+        this.getDraggable(e);
+        break;
+      case 'touchmove':
+      case 'mousemove':
+        this.moveItem(e);
+        break;
+      case 'touchend':
+      case 'mouseup':
+        this.appendToDroppable(e);
+        break;
+    }
+  }
+
+  getDraggable(e: MouseEvent | TouchEvent) {
+    const touchE = e as TouchEvent;
+    const clickE = e as MouseEvent;
+    if (
+      (touchE.type === 'touchstart' && !this.flag) ||
+      (clickE.type === 'mousedown' &&
+        !(clickE.button === 0 && clickE.buttons === 1 && this.flag))
+    ) {
+      return;
     }
 
-    define() {
-        const _this = this;
-        ['mousedown', 'mousemove', 'mouseup', 'touchstart', 'touchend', 'touchmove'].forEach(eventName => {
-            _this.canvas.addEventListener(eventName, e => _this.update(e as MouseEvent | TouchEvent));
-        })
-        this.compositor.layers.set('draggable', this.draggableLayer);
-        this.compositor.addBuffer('draggable');
+    let x: number, y: number;
+    if (e.type === 'touchstart') {
+      x = touchE.touches[0].clientX;
+      y = touchE.touches[0].clientY;
+    } else {
+      x = clickE.offsetX;
+      y = clickE.offsetY;
     }
 
-    update(e: MouseEvent | TouchEvent) {
-        e.preventDefault();
-        switch (e.type) {
-            case 'touchstart':
-            case 'mousedown':
-                this.getDraggable(e);
-                break;
-            case 'touchmove':
-            case 'mousemove':
-                this.moveItem(e);
-                break;
-            case 'touchend':
-            case 'mouseup':
-                this.appendToDroppable(e);
-                break;
-        }
+    const availableEntities: Entity[] = [];
+    const _this = this;
+    this.grid.get('drag').forEach(gridLayer => {
+      const availableEntity = gridLayer.getEntity(x, y);
+      if (availableEntity) {
+        availableEntities.push(availableEntity);
+      }
+    });
+    if (availableEntities.length > 0) {
+      availableEntities.forEach(availableEntity => {
+        const draggable = new Entity(
+          availableEntity.name,
+          availableEntity.image,
+          availableEntity.x,
+          availableEntity.y,
+          availableEntity.width,
+          availableEntity.height
+        );
+        _this.deltaX = x - availableEntity.x;
+        _this.deltaY = y - availableEntity.y;
+        _this.flag = false;
+        _this.draggableLayer[0].elements.push(draggable);
+      });
+    }
+  }
+
+  moveItem(e: MouseEvent | TouchEvent) {
+    const _this = this;
+    const touchE = e as TouchEvent;
+    const clickE = e as MouseEvent;
+
+    let x: number, y: number;
+    if (e.type === 'touchmove') {
+      x = touchE.touches[0].clientX;
+      y = touchE.touches[0].clientY;
+    } else {
+      x = clickE.offsetX;
+      y = clickE.offsetY;
     }
 
-    getDraggable(e: MouseEvent | TouchEvent) {
-        const touchE = e as TouchEvent;
-        const clickE = e as MouseEvent;
-        if (touchE.type === 'touchstart' && !this.flag || clickE.type === 'mousedown' && !(clickE.button === 0 && clickE.buttons === 1 && this.flag)) {
-            return;
-        }
+    if (this.draggableLayer[0].elements.length > 0) {
+      this.draggableLayer[0].elements.forEach(entity => {
+        entity.x = x - _this.deltaX;
+        entity.y = y - _this.deltaY;
+      });
+      this.compositor.updateBufferLayer('draggable');
+    } else {
+      cursorHandler(_this.canvas, _this.grid, x, y);
+    }
+  }
 
-        let x, y;
-        if (e.type === 'touchstart') {
-            x = touchE.touches[0].clientX;
-            y = touchE.touches[0].clientY;
-        } else {
-            x = clickE.offsetX;
-            y = clickE.offsetY;
-        }
+  appendToDroppable(e: MouseEvent | TouchEvent) {
+    const touchE = e as TouchEvent;
+    const clickE = e as MouseEvent;
 
-        const availableEntity = this.grid.get('drag').getEntity(x, y);
-        if (availableEntity !== undefined) {
-            const draggable = new Entity(
-                availableEntity.name,
-                availableEntity.image,
-                availableEntity.x,
-                availableEntity.y,
-                availableEntity.width,
-                availableEntity.height
-            );
-            this.deltaX = x - availableEntity.x;
-            this.deltaY = y - availableEntity.y;
-            this.flag = false;
-            this.draggableLayer.push(draggable);
-        }
-
+    let x: number, y: number;
+    if (e.type === 'touchend') {
+      x = touchE.changedTouches[0].clientX;
+      y = touchE.changedTouches[0].clientY;
+    } else {
+      x = clickE.offsetX;
+      y = clickE.offsetY;
     }
 
-    moveItem(e: MouseEvent | TouchEvent) {
-        const _this = this;
-        const touchE = e as TouchEvent;
-        const clickE = e as MouseEvent;
+    const availableEntities: Entity[] = [];
+    this.grid.get('drop').forEach(gridLayer => {
+      const availableEntity = gridLayer.getEntity(x, y);
+      if (availableEntity) {
+        availableEntities.push(availableEntity);
+      }
+    });
 
-        let x:number, y:number;
-        if (e.type === 'touchmove') {
-            x = touchE.touches[0].clientX;
-            y = touchE.touches[0].clientY;
-        } else {
-            x = clickE.offsetX;
-            y = clickE.offsetY;
-        }
+    availableEntities.forEach(availableEntity => {
+      if (availableEntity && this.draggableLayer[0].elements.length > 0) {
+        this.draggableLayer[0].elements.forEach(entity =>
+          availableEntity.addChild(entity)
+        );
+      }
+    });
 
-        if (this.draggableLayer.length > 0) {
-            this.draggableLayer.forEach(entity => {
-                entity.x = x - _this.deltaX;
-                entity.y = y - _this.deltaY;
-            })
-            this.compositor.updateBufferLayer('draggable');
-        } else {
-            cursorHandler(_this.canvas, _this.grid, x, y);
-        }        
-    }
+    this.draggableLayer[0].elements.length = 0;
+    this.deltaX = 0;
+    this.deltaY = 0;
+    this.flag = true;
 
-    appendToDroppable(e: MouseEvent | TouchEvent) {
-        const touchE = e as TouchEvent;
-        const clickE = e as MouseEvent;
-
-        let x:number, y:number;
-        if (e.type === 'touchend') {
-            x = touchE.changedTouches[0].clientX;
-            y = touchE.changedTouches[0].clientY;
-        } else {
-            x = clickE.offsetX;
-            y = clickE.offsetY;
-        }
-        
-        const availableEntity = this.grid.get('drop').getEntity(x, y);
-        if (availableEntity && this.draggableLayer.length > 0) {
-            this.draggableLayer.forEach(entity => availableEntity.addChild(entity));
-        }
-        this.draggableLayer.length = 0;
-        this.deltaX = 0;
-        this.deltaY = 0;
-        this.flag = true;
-
-        this.compositor.updateBufferLayer('drop');
-        this.compositor.updateBufferLayer('draggable');
-    }
+    this.compositor.updateBufferLayer('drop');
+    this.compositor.updateBufferLayer('draggable');
+  }
 }

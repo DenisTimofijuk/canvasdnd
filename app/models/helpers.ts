@@ -1,6 +1,6 @@
 import { Entity } from './Entity';
-import { GridName } from '../app';
 import Grid from './grid';
+import { LayerType } from './layout';
 
 export function getEntityByCoordinates(
   grid: Array<Entity>,
@@ -18,15 +18,28 @@ export function getEntityByCoordinates(
 
 export function cursorHandler(
   canvas: HTMLCanvasElement,
-  grid: Map<GridName, Grid>,
+  grid: Map<LayerType, Array<Grid>>,
   x: number,
   y: number
 ) {
-  if (grid.get('drag').getEntity(x, y)) {
-    canvas.style.cursor = 'move';
-  } else if (grid.get('drop').getEntity(x, y)) {
-    canvas.style.cursor = 'pointer';
-  } else {
-    canvas.style.cursor = 'default';
+  let flag = false;
+  grid.get('drag').forEach(gridLayer => {
+    if (gridLayer.getEntity(x, y)) {
+      canvas.style.cursor = 'move';
+      flag = !flag;
+    }
+  });
+  if (flag) {
+    return;
   }
+  grid.get('drop').forEach(gridLayer => {
+    if (gridLayer.getEntity(x, y)) {
+      canvas.style.cursor = 'pointer';
+      flag = !flag;
+    }
+  });
+  if (flag) {
+    return;
+  }
+  canvas.style.cursor = 'default';
 }

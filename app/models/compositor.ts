@@ -1,16 +1,14 @@
 import { SpriteSheet } from "./SpriteSheet";
-import { createLayers } from "./createLayers";
+import { createLayers, Layer } from "./createLayers";
 import { Entity } from "./Entity";
 import { LayerType } from "./layout";
 
 export default class Compositor {
     canvas: HTMLCanvasElement;
-    layers: Map<LayerType, Array<Entity>>;
+    layers: Layer;
     ctx: CanvasRenderingContext2D;
     buffers: Map<LayerType, HTMLCanvasElement>;
-    debug: boolean;
-    constructor(sprites: SpriteSheet, canvas: HTMLCanvasElement, debug?:boolean) {
-        this.debug = debug !== undefined ? debug : false;
+    constructor(sprites: SpriteSheet, canvas: HTMLCanvasElement) {
         this.canvas = canvas;
         this.buffers = new Map();
         this.ctx = canvas.getContext('2d');
@@ -38,8 +36,10 @@ export default class Compositor {
         const bufferCanv = this.buffers.get(name);
         const bufferCtx = bufferCanv.getContext('2d');
         bufferCtx.clearRect(0, 0, bufferCanv.width, bufferCanv.height);
-        const _this = this;
-        this.layers.get(name).forEach(entity => entity.draw(bufferCtx, _this.debug));
+        const layers = this.layers.get(name);
+        layers.forEach(layer => {
+            layer.elements.forEach(entity => entity.draw(bufferCtx, layer.debug));
+        })        
     }
 
     draw() {

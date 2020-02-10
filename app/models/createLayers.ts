@@ -2,11 +2,16 @@ import { SpriteSheet } from "./SpriteSheet";
 import { Entity } from "./Entity";
 import { itemLayer, defineLayersWithElements, LayerType } from "./layout";
 
-export function createLayers(sprites: SpriteSheet) {
-  const layers:Map<LayerType, Array<Entity>> = new Map();
+export type Layer = Map<LayerType, Array<{elements: Array<Entity>, debug:boolean}>>;
 
+export function createLayers(sprites: SpriteSheet) {
+  const layers:Layer = new Map();
   defineLayersWithElements().forEach(layer => {
-    layers.set(layer.type, getLayerElements(layer.elements, sprites));
+    if(layers.has(layer.type)){
+      layers.get(layer.type).push({elements: getLayerElements(layer.elements, sprites), debug:layer.debug})
+    }else{
+      layers.set(layer.type, [{elements: getLayerElements(layer.elements, sprites), debug:layer.debug}]);
+    }
   })
 
   return layers;
