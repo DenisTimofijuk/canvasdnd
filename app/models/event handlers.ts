@@ -3,12 +3,13 @@ import { cursorHandler } from './helpers';
 import Compositor from './compositor';
 import Grid from './grid';
 import { LayerType, LayerElemen } from './layout';
+import { LayerElements } from './createLayers';
 
 export default class EventsHandler {
   flag: boolean;
   deltaX: number;
   deltaY: number;
-  draggableLayer: [{ elements: Array<Entity>; debug: boolean }];
+  draggableLayer:  Array<LayerElements>;
   previousEntity: Entity;
   compositor: Compositor;
   canvas: HTMLCanvasElement;
@@ -24,7 +25,7 @@ export default class EventsHandler {
     this.flag = true;
     this.deltaX = 0;
     this.deltaY = 0;
-    this.draggableLayer = [{ elements: [], debug: false }];
+    this.draggableLayer = [{ elements: [], debug: false, elements_padding_right:0, elements_padding_top:0 }];
     this.define();
   }
 

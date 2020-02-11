@@ -67,9 +67,9 @@ export class CanvasCalendar {
     gridToLayers.forEach(name =>
       _this.compositor.layers.get(name).forEach(layer => {
         if (_this.grid.has(name)) {
-          _this.grid.get(name).push(new Grid(layer.elements));
+          _this.grid.get(name).push(new Grid(layer));
         } else {
-          _this.grid.set(name, [new Grid(layer.elements)]);
+          _this.grid.set(name, [new Grid(layer)]);
         }
       })
     );
@@ -101,7 +101,7 @@ export class CanvasCalendar {
   }
 
   initEventHandler() {
-    const eventHandler = new EventsHandler(this.canvas, this.compositor, this.grid);
+    new EventsHandler(this.canvas, this.compositor, this.grid);
   }
 }
 

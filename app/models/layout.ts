@@ -38,8 +38,13 @@ export type LayerType = 'item' | 'drag' | 'drop' | 'grid' | 'draggable';
 export type LayerDefinder = Array<{
   type: LayerType;
   debug: boolean;
+  elements_padding_right?:number; //padding is done mannually by defining coordinates, but this parameter is still required for the grid, please use [debug = true] to get elements alligned with the grid correctly
+  elements_padding_top?:number; //padding is doen mannually by defining coordinates, but this parameter is still required for the grid, please use [debug = true] to get elements alligned with the grid correctly
   elements: itemLayer;
 }>;
+
+const CALENDAR_PADDING_RIGHT = 10;
+const CALENDAR_PADDING_TOP = 5;
 
 export function defineLayersWithElements(): LayerDefinder {
   return [
@@ -66,10 +71,11 @@ export function defineLayersWithElements(): LayerDefinder {
     {
       type: 'drag',
       debug: false,
+      elements_padding_top: 5,
       elements: [
         {
           name: 'pen',
-          x: 355,
+          x: 360,
           y: 5,
           w: 60,
           h: 60,
@@ -82,7 +88,7 @@ export function defineLayersWithElements(): LayerDefinder {
         },
         {
           name: 'pen',
-          x: 355,
+          x: 360,
           y: 70,
           w: 60,
           h: 60,
@@ -95,7 +101,7 @@ export function defineLayersWithElements(): LayerDefinder {
         },
         {
           name: 'pen',
-          x: 355,
+          x: 360,
           y: 135,
           w: 60,
           h: 60,
@@ -108,7 +114,7 @@ export function defineLayersWithElements(): LayerDefinder {
         },
         {
           name: 'hand',
-          x: 495,
+          x: 480,
           y: 5,
           w: 60,
           h: 60,
@@ -121,7 +127,7 @@ export function defineLayersWithElements(): LayerDefinder {
         },
         {
           name: 'hand',
-          x: 495,
+          x: 480,
           y: 70,
           w: 60,
           h: 60,
@@ -134,7 +140,7 @@ export function defineLayersWithElements(): LayerDefinder {
         },
         {
           name: 'hand',
-          x: 495,
+          x: 480,
           y: 135,
           w: 60,
           h: 60,
@@ -150,13 +156,12 @@ export function defineLayersWithElements(): LayerDefinder {
     {
       type: 'drop',
       debug: false,
+      elements_padding_right: CALENDAR_PADDING_RIGHT,
+      elements_padding_top: CALENDAR_PADDING_TOP,
       elements: getCalendarElements('calendar', 7, 4, 11, 300, 70, 70)
     }
   ];
 }
-
-export const CALENDAR_PADDING_RIGHT = 10;
-export const CALENDAR_PADDING_TOP = 5;
 
 function getCalendarElements(
   name: TileName,

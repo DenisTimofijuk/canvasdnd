@@ -1,5 +1,5 @@
 import { Entity } from "./Entity";
-import { CALENDAR_PADDING_RIGHT, CALENDAR_PADDING_TOP } from "./layout";
+import { LayerElements } from "./createLayers";
 
 export default class Grid {
     entities: Entity[];
@@ -8,8 +8,12 @@ export default class Grid {
     h: number;
     trim_x:number;
     trim_y:number;
-    constructor(entities: Array<Entity>) {
-        this.entities = entities;
+    PADDING_RIGHT: number;
+    PADDING_TOP: number;
+    constructor(layer: LayerElements) {
+        this.entities = layer.elements;
+        this.PADDING_RIGHT = layer.elements_padding_right;
+        this.PADDING_TOP = layer.elements_padding_top;
         this.grid = [];
         this.define();
     }
@@ -17,8 +21,8 @@ export default class Grid {
     define() {
         const _this = this;
         this.entities.forEach(entity => {
-            _this.w = entity.width + CALENDAR_PADDING_RIGHT;
-            _this.h = entity.height + CALENDAR_PADDING_TOP;
+            _this.w = entity.width + _this.PADDING_RIGHT;
+            _this.h = entity.height + _this.PADDING_TOP;
             const index_x = Math.floor(entity.x / _this.w) % _this.w;
             const index_y = Math.floor(entity.y / _this.h) % _this.h;
             if (!_this.grid[index_x]) {
