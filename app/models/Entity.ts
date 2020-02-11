@@ -46,7 +46,7 @@ export class Entity {
     const height = this.height + this.EXPAND_SIZE;
     ctx.drawImage(this.image, x, y, width, height);
     if (this.label.length > 0 && this.label !== ' ') {
-      drawEntityLabel(ctx, x, y, width, height, this);
+      drawEntityLabel(ctx, x, y, width, height, this.label, this.style);
     }
     if (debug) {
       drawEntityBorder(ctx, x, y, width, height);

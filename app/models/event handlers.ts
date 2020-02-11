@@ -16,12 +16,14 @@ export default class EventsHandler {
   canvas: HTMLCanvasElement;
   grid: Map<LayerType, Array<Grid>>;
   droppablePopUpLayer: { elements: PopUp[]; debug: boolean; elements_padding_right: number; elements_padding_top: number; }[];
+  popupActive: boolean;
 
   constructor(
     canvas: HTMLCanvasElement,
     compositor: Compositor,
     grid: Map<LayerType, Array<Grid>>
   ) {
+    this.popupActive = false;
     this.grid = grid;
     this.canvas = canvas;
     this.compositor = compositor;
@@ -59,7 +61,7 @@ export default class EventsHandler {
       case 'touchstart':
       case 'mousedown':
         this.getDraggable(e);
-        this.droppableHandler(e);
+        this.popupHandler(e);
         break;
       case 'touchmove':
       case 'mousemove':
@@ -72,18 +74,40 @@ export default class EventsHandler {
     }
   }
 
-  droppableHandler(e: MouseEvent | TouchEvent) {
+  popupHandler(e: MouseEvent | TouchEvent) {
+    const touchE = e as TouchEvent;
+    const clickE = e as MouseEvent;
+
+    let x: number, y: number;
+    if (e.type === 'touchmove') {
+      x = touchE.touches[0].clientX;
+      y = touchE.touches[0].clientY;
+    } else {
+      x = clickE.offsetX;
+      y = clickE.offsetY;
+    }
+    
+    if (this.popupActive && this.droppablePopUpLayer[0].elements[0].checkCoord(x, y)) {
+      return;
+    }
+
     this.droppablePopUpLayer[0].elements.length = 0;
     const availableDroppable = this.getDroppable(e);
 
     if (availableDroppable.length > 0) {
+      this.popupActive = true;
       const popUp = new PopUp(availableDroppable[0]);
       this.droppablePopUpLayer[0].elements.push(popUp);
+    } else {
+      this.popupActive = false;
     }
     this.compositor.updateBufferLayer('droppablePopUp');
   }
 
   getDraggable(e: MouseEvent | TouchEvent) {
+    if (this.popupActive) {
+      return;
+    }
     const touchE = e as TouchEvent;
     const clickE = e as MouseEvent;
     if (
@@ -127,6 +151,9 @@ export default class EventsHandler {
   }
 
   moveItem(e: MouseEvent | TouchEvent) {
+    if (this.popupActive) {
+      return;
+    }
     const _this = this;
     const touchE = e as TouchEvent;
     const clickE = e as MouseEvent;
@@ -153,6 +180,9 @@ export default class EventsHandler {
   }
 
   appendToDroppable(e: MouseEvent | TouchEvent) {
+    if (this.popupActive) {
+      return;
+    }
     const availableDroppable = this.getDroppable(e);
 
     availableDroppable.forEach(droppable => {

@@ -1,4 +1,5 @@
 import { Entity } from "../Entity";
+import { LabelStyle } from "../layout";
 
 export function drawEntityBorder(
     ctx: CanvasRenderingContext2D,
@@ -14,25 +15,25 @@ export function drawEntityBorder(
     ctx.closePath();
 }
 
-export function drawEntityLabel(ctx: CanvasRenderingContext2D, x: number, y: number, width: number, height: number, entity: Entity) {
-    const label_offset_x = entity.style && entity.style.label_offset_x !== undefined ? entity.style.label_offset_x : 0;
-    const label_offset_y = entity.style && entity.style.label_offset_y !== undefined ? entity.style.label_offset_y : 0;
+export function drawEntityLabel(ctx: CanvasRenderingContext2D, x: number, y: number, width: number, height: number, label: string, style:LabelStyle) {
+    const label_offset_x = style && style.label_offset_x !== undefined ? style.label_offset_x : 0;
+    const label_offset_y = style && style.label_offset_y !== undefined ? style.label_offset_y : 0;
     ctx.save();
-    if (entity.style) {
-        if (entity.style.label_font) {
-            ctx.font = entity.style.label_font;
+    if (style) {
+        if (style.label_font) {
+            ctx.font = style.label_font;
         }
-        if (entity.style.label_fillStyle) {
-            ctx.fillStyle = entity.style.label_fillStyle;
+        if (style.label_fillStyle) {
+            ctx.fillStyle = style.label_fillStyle;
         }
-        if (entity.style.label_textAlign) {
-            ctx.textAlign = entity.style.label_textAlign;
+        if (style.label_textAlign) {
+            ctx.textAlign = style.label_textAlign;
         }
     }
 
-    const text = ctx.measureText(entity.label);
+    const text = ctx.measureText(label);
     if (text.width > width) {
-        const words = entity.label.split(' ');
+        const words = label.split(' ');
         let textPerRow = '';
         let rowIndex = 0;
         const rowHeight = 18;
@@ -49,7 +50,7 @@ export function drawEntityLabel(ctx: CanvasRenderingContext2D, x: number, y: num
             }
         }
     } else {
-        ctx.fillText(entity.label, (x + label_offset_x), (y + height + label_offset_y));
+        ctx.fillText(label, (x + label_offset_x), (y + height + label_offset_y));
     }
     ctx.restore();
 }
