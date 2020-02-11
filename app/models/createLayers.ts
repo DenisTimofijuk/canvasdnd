@@ -1,9 +1,10 @@
 import { SpriteSheet } from "./SpriteSheet";
 import { Entity } from "./Entity";
 import { itemLayer, defineLayersWithElements, LayerType } from "./layout";
+import { PopUp } from "./popUp";
 
 export type LayerElements = {
-  elements: Array<Entity>, 
+  elements: Array<Entity | PopUp>, 
   debug:boolean,
   elements_padding_right:number;
   elements_padding_top:number;

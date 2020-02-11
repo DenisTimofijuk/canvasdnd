@@ -34,7 +34,7 @@ export type LayerElemen = {
 };
 
 export type itemLayer = Array<LayerElemen>;
-export type LayerType = 'item' | 'drag' | 'drop' | 'grid' | 'draggable';
+export type LayerType = 'item' | 'drag' | 'drop' | 'grid' | 'draggable' | 'droppablePopUp';
 export type LayerDefinder = Array<{
   type: LayerType;
   debug: boolean;

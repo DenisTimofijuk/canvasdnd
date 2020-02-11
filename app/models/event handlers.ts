@@ -4,16 +4,19 @@ import Compositor from './compositor';
 import Grid from './grid';
 import { LayerType, LayerElemen } from './layout';
 import { LayerElements } from './createLayers';
+import { PopUp } from './popUp';
 
 export default class EventsHandler {
   flag: boolean;
   deltaX: number;
   deltaY: number;
-  draggableLayer:  Array<LayerElements>;
+  draggableLayer: Array<LayerElements>;
   previousEntity: Entity;
   compositor: Compositor;
   canvas: HTMLCanvasElement;
   grid: Map<LayerType, Array<Grid>>;
+  droppablePopUpLayer: { elements: PopUp[]; debug: boolean; elements_padding_right: number; elements_padding_top: number; }[];
+
   constructor(
     canvas: HTMLCanvasElement,
     compositor: Compositor,
@@ -25,7 +28,8 @@ export default class EventsHandler {
     this.flag = true;
     this.deltaX = 0;
     this.deltaY = 0;
-    this.draggableLayer = [{ elements: [], debug: false, elements_padding_right:0, elements_padding_top:0 }];
+    this.draggableLayer = [{ elements: [] as Array<Entity>, debug: false, elements_padding_right: 0, elements_padding_top: 0 }];;
+    this.droppablePopUpLayer = [{ elements: [] as Array<PopUp>, debug: false, elements_padding_right: 0, elements_padding_top: 0 }];;
     this.define();
   }
 
@@ -45,6 +49,8 @@ export default class EventsHandler {
     });
     this.compositor.layers.set('draggable', this.draggableLayer);
     this.compositor.addBuffer('draggable');
+    this.compositor.layers.set('droppablePopUp', this.droppablePopUpLayer);
+    this.compositor.addBuffer('droppablePopUp');
   }
 
   update(e: MouseEvent | TouchEvent) {
@@ -53,6 +59,7 @@ export default class EventsHandler {
       case 'touchstart':
       case 'mousedown':
         this.getDraggable(e);
+        this.droppableHandler(e);
         break;
       case 'touchmove':
       case 'mousemove':
@@ -63,6 +70,17 @@ export default class EventsHandler {
         this.appendToDroppable(e);
         break;
     }
+  }
+
+  droppableHandler(e: MouseEvent | TouchEvent) {
+    this.droppablePopUpLayer[0].elements.length = 0;
+    const availableDroppable = this.getDroppable(e);
+
+    if (availableDroppable.length > 0) {
+      const popUp = new PopUp(availableDroppable[0]);
+      this.droppablePopUpLayer[0].elements.push(popUp);
+    }
+    this.compositor.updateBufferLayer('droppablePopUp');
   }
 
   getDraggable(e: MouseEvent | TouchEvent) {
@@ -123,7 +141,8 @@ export default class EventsHandler {
     }
 
     if (this.draggableLayer[0].elements.length > 0) {
-      this.draggableLayer[0].elements.forEach(entity => {
+      this.draggableLayer[0].elements.forEach(element => {
+        const entity = element as Entity;
         entity.x = x - _this.deltaX;
         entity.y = y - _this.deltaY;
       });
@@ -134,6 +153,27 @@ export default class EventsHandler {
   }
 
   appendToDroppable(e: MouseEvent | TouchEvent) {
+    const availableDroppable = this.getDroppable(e);
+
+    availableDroppable.forEach(droppable => {
+      if (droppable && this.draggableLayer[0].elements.length > 0) {
+        this.draggableLayer[0].elements.forEach(element => {
+          const entity = element as Entity;
+          droppable.addChild(entity)
+        });
+      }
+    });
+
+    this.draggableLayer[0].elements.length = 0;
+    this.deltaX = 0;
+    this.deltaY = 0;
+    this.flag = true;
+
+    this.compositor.updateBufferLayer('drop');
+    this.compositor.updateBufferLayer('draggable');
+  }
+
+  getDroppable(e: MouseEvent | TouchEvent) {
     const touchE = e as TouchEvent;
     const clickE = e as MouseEvent;
 
@@ -146,29 +186,14 @@ export default class EventsHandler {
       y = clickE.offsetY;
     }
 
-    const availableDroppable: Entity[] = [];
+    const availableDroppable: Array<Entity> = [];
     this.grid.get('drop').forEach(gridLayer => {
       const droppable = gridLayer.getEntity(x, y);
       if (droppable) {
         availableDroppable.push(droppable);
       }
     });
-
-    availableDroppable.forEach(droppable => {
-      if (droppable && this.draggableLayer[0].elements.length > 0) {
-        this.draggableLayer[0].elements.forEach(entity =>
-          droppable.addChild(entity)
-        );
-      }
-    });
-
-    this.draggableLayer[0].elements.length = 0;
-    this.deltaX = 0;
-    this.deltaY = 0;
-    this.flag = true;
-
-    this.compositor.updateBufferLayer('drop');
-    this.compositor.updateBufferLayer('draggable');
+    return availableDroppable;
   }
 }
 

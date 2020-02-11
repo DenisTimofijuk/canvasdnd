@@ -2,7 +2,7 @@ import { Entity } from "./Entity";
 import { LayerElements } from "./createLayers";
 
 export default class Grid {
-    entities: Entity[];
+    entities: Array<Entity>;
     grid: Entity[][];
     w: number;
     h: number;
@@ -11,7 +11,8 @@ export default class Grid {
     PADDING_RIGHT: number;
     PADDING_TOP: number;
     constructor(layer: LayerElements) {
-        this.entities = layer.elements;
+        const elements = layer.elements as Array<Entity>;
+        this.entities = elements;
         this.PADDING_RIGHT = layer.elements_padding_right;
         this.PADDING_TOP = layer.elements_padding_top;
         this.grid = [];
