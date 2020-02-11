@@ -1,6 +1,6 @@
 import { loadImage, getPleaseWait } from './models/loaders';
 import { SpriteSheet } from './models/SpriteSheet';
-import EventsHandler, { EventCallback, CallbackArguments } from './models/event handlers';
+import EventsHandler from './models/event handlers';
 import Compositor from './models/compositor';
 import Grid from './models/grid';
 import { TileName, LayerType } from './models/layout';
@@ -101,14 +101,7 @@ export class CanvasCalendar {
   }
 
   initEventHandler() {
-    const onEvent = function (o:CallbackArguments) { //STILL pending - looks like callback is not neceserry here
-      console.log(o);
-      if(o.type === 'add'){
-        this.compositor.updateBufferLayer('drop');
-        this.compositor.updateBufferLayer('draggable');
-      }
-    }
-    const eventHandler = new EventsHandler(this.canvas, this.compositor, this.grid, onEvent);
+    const eventHandler = new EventsHandler(this.canvas, this.compositor, this.grid);
   }
 }
 

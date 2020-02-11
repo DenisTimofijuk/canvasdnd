@@ -13,8 +13,15 @@ export type TileName =
   | 'woman3'
   | 'woman4';
 
+export type LabelStyle = {
+  label_font?: string;
+  label_fillStyle?: string;
+  label_textAlign?: CanvasTextAlign;
+  label_offset_x?: number;
+  label_offset_y?: number;
+};
 
-type LayerElemen = {
+export type LayerElemen = {
   name: TileName;
   x: number;
   y: number;
@@ -23,6 +30,7 @@ type LayerElemen = {
   val: number;
   label: string;
   referanceID: string;
+  style?: LabelStyle;
 };
 
 export type itemLayer = Array<LayerElemen>;
@@ -46,9 +54,12 @@ export function defineLayersWithElements(): LayerDefinder {
           w: 100,
           h: 200,
           val: 0,
-          label:
-            'An older patient who is aged between 36-45 and is on her 2nd or 3rd cycle',
-          referanceID: ''
+          label: 'An older patient who is aged between 36-45 and is on her 2nd or 3rd cycle',
+          referanceID: '',
+          style: {
+            label_font: '14px serif',
+            label_offset_y: 10
+          }
         }
       ]
     },
@@ -64,7 +75,10 @@ export function defineLayersWithElements(): LayerDefinder {
           h: 60,
           val: 75,
           label: '75ml',
-          referanceID: ''
+          referanceID: '',
+          style:{
+            label_font: '13px serif'
+          }
         },
         {
           name: 'pen',
@@ -74,7 +88,10 @@ export function defineLayersWithElements(): LayerDefinder {
           h: 60,
           val: 95,
           label: '95ml',
-          referanceID: ''
+          referanceID: '',
+          style:{
+            label_font: '13px serif'
+          }
         },
         {
           name: 'pen',
@@ -84,7 +101,10 @@ export function defineLayersWithElements(): LayerDefinder {
           h: 60,
           val: 125,
           label: '125ml',
-          referanceID: ''
+          referanceID: '',
+          style:{
+            label_font: '13px serif'
+          }
         },
         {
           name: 'hand',
@@ -94,7 +114,10 @@ export function defineLayersWithElements(): LayerDefinder {
           h: 60,
           val: 300,
           label: '300IU',
-          referanceID: ''
+          referanceID: '',
+          style:{
+            label_font: '13px serif'
+          }
         },
         {
           name: 'hand',
@@ -104,7 +127,10 @@ export function defineLayersWithElements(): LayerDefinder {
           h: 60,
           val: 600,
           label: '600IU',
-          referanceID: ''
+          referanceID: '',
+          style:{
+            label_font: '13px serif'
+          }
         },
         {
           name: 'hand',
@@ -114,7 +140,10 @@ export function defineLayersWithElements(): LayerDefinder {
           h: 60,
           val: 1200,
           label: '1200IU',
-          referanceID: ''
+          referanceID: '',
+          style:{
+            label_font: '13px serif'
+          }
         }
       ]
     },
@@ -151,7 +180,13 @@ function getCalendarElements(
         h: element_h,
         val: 0,
         label: 'Day 1',
-        referanceID: ''
+        referanceID: '',
+        style:{
+          label_font: 'bold 10px arial',
+          label_offset_x: 20,
+          label_offset_y: -52,
+          label_fillStyle: 'white'
+        }
       });
       x += element_w + CALENDAR_PADDING_RIGHT;
     }

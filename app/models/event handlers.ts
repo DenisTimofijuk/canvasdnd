@@ -2,17 +2,7 @@ import { Entity } from './Entity';
 import { cursorHandler } from './helpers';
 import Compositor from './compositor';
 import Grid from './grid';
-import { LayerType } from './layout';
-
-type CallbackType = 'add' | 'remove';
-export type CallbackArguments = {
-  type: CallbackType;
-  activitie: Entity;
-  target: Entity;
-}
-export interface EventCallback {
-  (result: CallbackArguments): void;
-}
+import { LayerType, LayerElemen } from './layout';
 
 export default class EventsHandler {
   flag: boolean;
@@ -23,14 +13,11 @@ export default class EventsHandler {
   compositor: Compositor;
   canvas: HTMLCanvasElement;
   grid: Map<LayerType, Array<Grid>>;
-  callback: EventCallback;
   constructor(
     canvas: HTMLCanvasElement,
     compositor: Compositor,
-    grid: Map<LayerType, Array<Grid>>,
-    callback: EventCallback
+    grid: Map<LayerType, Array<Grid>>
   ) {
-    this.callback = callback;
     this.grid = grid;
     this.canvas = canvas;
     this.compositor = compositor;
@@ -107,16 +94,10 @@ export default class EventsHandler {
     });
     if (availableDraggable.length > 0) {
       availableDraggable.forEach(availableEntity => {
+
         const draggable = new Entity(
-          availableEntity.name,
           availableEntity.image,
-          availableEntity.x,
-          availableEntity.y,
-          availableEntity.val,
-          availableEntity.label,
-          availableEntity.referanceID,
-          availableEntity.width,
-          availableEntity.height
+          getParameters(availableEntity)
         );
         _this.deltaX = x - availableEntity.x;
         _this.deltaY = y - availableEntity.y;
@@ -178,24 +159,28 @@ export default class EventsHandler {
           droppable.addChild(entity)
         );
       }
-    });         
-
-    const activitie = this.draggableLayer[0].elements[0];
-    const droppable = availableDroppable[0];
+    });
 
     this.draggableLayer[0].elements.length = 0;
     this.deltaX = 0;
     this.deltaY = 0;
     this.flag = true;
 
-    this.fireCallback('add', activitie, droppable);
+    this.compositor.updateBufferLayer('drop');
+    this.compositor.updateBufferLayer('draggable');
   }
+}
 
-  fireCallback(type:CallbackType, activitie:Entity, target:Entity){
-    this.callback({
-      type: type,
-      activitie: activitie,
-      target: target
-    })
+function getParameters(availableEntity: Entity): LayerElemen {
+  return {
+    h: availableEntity.height,
+    label: availableEntity.label,
+    name: availableEntity.name,
+    referanceID: availableEntity.referanceID,
+    val: availableEntity.val,
+    w: availableEntity.width,
+    x: availableEntity.x,
+    y: availableEntity.y,
+    style: availableEntity.style
   }
 }

@@ -1,4 +1,4 @@
-import { TileName } from './layout';
+import { TileName, LayerElemen, LabelStyle } from './layout';
 
 const CHILDREN_OFFSET_TOP = 25;
 const CHILDREN_OFFSET_LEFT = 15;
@@ -18,27 +18,22 @@ export class Entity {
   referanceID: string;
   childs: Array<Entity>;
   EXPAND_SIZE: number;
+  style: LabelStyle;
 
   constructor(
-    name: TileName,
     image: HTMLCanvasElement,
-    x: number,
-    y: number,
-    val: number,
-    label: string,
-    referanceID: string,
-    width?: number,
-    height?: number
+    p: LayerElemen
   ) {
-    this.name = name;
+    this.name = p.name;
     this.image = image;
-    this.width = width ? width : image.width;
-    this.height = height ? height : image.height;
-    this.x = x;
-    this.y = y;
-    this.val = val;
-    this.label = label;
-    this.referanceID = referanceID;
+    this.width = p.w ? p.w : image.width;
+    this.height = p.h ? p.h : image.height;
+    this.x = p.x;
+    this.y = p.y;
+    this.val = p.val;
+    this.label = p.label;
+    this.style = p.style;
+    this.referanceID = p.referanceID;
     this.childs = [];
     this.EXPAND_SIZE = 0;
   }
@@ -49,6 +44,7 @@ export class Entity {
     const width = this.width + this.EXPAND_SIZE;
     const height = this.height + this.EXPAND_SIZE;
     ctx.drawImage(this.image, x, y, width, height);
+    drawLabel(ctx, x, y, width, height, this);
     if (debug) {
       drawBorder(ctx, x, y, width, height);
     }
@@ -113,4 +109,44 @@ function drawBorder(
   ctx.rect(x, y, width, height);
   ctx.stroke();
   ctx.closePath();
+}
+
+function drawLabel(ctx: CanvasRenderingContext2D, x:number, y:number, width:number, height:number, entity:Entity) {
+  const label_offset_x = entity.style && entity.style.label_offset_x !== undefined ? entity.style.label_offset_x : 0;
+  const label_offset_y = entity.style && entity.style.label_offset_y !== undefined ? entity.style.label_offset_y : 0;
+  ctx.save();
+  if(entity.style){
+    if(entity.style.label_font){
+      ctx.font = entity.style.label_font;
+    }
+    if(entity.style.label_fillStyle){
+      ctx.fillStyle = entity.style.label_fillStyle;
+    }
+    if(entity.style.label_textAlign){
+      ctx.textAlign = entity.style.label_textAlign;
+    }
+  }
+  
+  const text = ctx.measureText(entity.label);
+  if(text.width > width){
+    const words = entity.label.split(' ');
+    let textPerRow = ''; 
+    let rowIndex = 0;
+    const rowHeight = 18;
+    for(var i=0; i<words.length; i++){
+      if(ctx.measureText(textPerRow).width < width){
+        textPerRow += words[i] + ' ';
+        if(i === words.length - 1){
+          ctx.fillText(textPerRow, (x + label_offset_x), (y + height + label_offset_y + rowHeight * rowIndex));  
+        }
+      }else{
+        ctx.fillText(textPerRow, (x + label_offset_x), (y + height + label_offset_y + rowHeight * rowIndex));
+        textPerRow = words[i] + ' ';
+        rowIndex++;
+      }
+    }
+  }else{
+    ctx.fillText(entity.label, (x + label_offset_x), (y + height + label_offset_y));
+  }
+  ctx.restore();
 }
