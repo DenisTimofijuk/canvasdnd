@@ -65,6 +65,13 @@ export function defineTiles(): Array<Tile> {
         y: 334,
         w: 235,
         h: 284
+      },
+      {
+        name: 'brand',
+        x: 8,
+        y: 641,
+        w: 148,
+        h: 40
       }
     ];
   }  

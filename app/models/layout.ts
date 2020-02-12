@@ -11,7 +11,8 @@ export type TileName =
   | 'woman1'
   | 'woman2'
   | 'woman3'
-  | 'woman4';
+  | 'woman4'
+  | 'brand';
 
 export type LabelStyle = {
   label_font?: string;
@@ -34,12 +35,19 @@ export type LayerElemen = {
 };
 
 export type itemLayer = Array<LayerElemen>;
-export type LayerType = 'item' | 'drag' | 'drop' | 'grid' | 'draggable' | 'droppablePopUp';
+export type LayerType =
+  | 'item'
+  | 'drag'
+  | 'drop'
+  | 'grid'
+  | 'draggable'
+  | 'droppablePopUp'
+  | 'droppablePopUp_UI';
 export type LayerDefinder = Array<{
   type: LayerType;
   debug: boolean;
-  elements_padding_right?:number; //padding is done mannually by defining coordinates, but this parameter is still required for the grid, please use [debug = true] to get elements alligned with the grid correctly
-  elements_padding_top?:number; //padding is doen mannually by defining coordinates, but this parameter is still required for the grid, please use [debug = true] to get elements alligned with the grid correctly
+  elements_padding_right?: number; //padding is done mannually by defining coordinates, but this parameter is still required for the grid, please use [debug = true] to get elements alligned with the grid correctly
+  elements_padding_top?: number; //padding is doen mannually by defining coordinates, but this parameter is still required for the grid, please use [debug = true] to get elements alligned with the grid correctly
   elements: itemLayer;
 }>;
 
@@ -59,7 +67,8 @@ export function defineLayersWithElements(): LayerDefinder {
           w: 100,
           h: 200,
           val: 0,
-          label: 'An older patient who is aged between 36-45 and is on her 2nd or 3rd cycle',
+          label:
+            'An older patient who is aged between 36-45 and is on her 2nd or 3rd cycle',
           referanceID: '',
           style: {
             label_font: '14px serif',
@@ -82,7 +91,7 @@ export function defineLayersWithElements(): LayerDefinder {
           val: 75,
           label: '75ml',
           referanceID: '',
-          style:{
+          style: {
             label_font: '13px serif'
           }
         },
@@ -95,7 +104,7 @@ export function defineLayersWithElements(): LayerDefinder {
           val: 95,
           label: '95ml',
           referanceID: '',
-          style:{
+          style: {
             label_font: '13px serif'
           }
         },
@@ -108,7 +117,7 @@ export function defineLayersWithElements(): LayerDefinder {
           val: 125,
           label: '125ml',
           referanceID: '',
-          style:{
+          style: {
             label_font: '13px serif'
           }
         },
@@ -121,7 +130,7 @@ export function defineLayersWithElements(): LayerDefinder {
           val: 300,
           label: '300IU',
           referanceID: '',
-          style:{
+          style: {
             label_font: '13px serif'
           }
         },
@@ -134,7 +143,7 @@ export function defineLayersWithElements(): LayerDefinder {
           val: 600,
           label: '600IU',
           referanceID: '',
-          style:{
+          style: {
             label_font: '13px serif'
           }
         },
@@ -147,8 +156,152 @@ export function defineLayersWithElements(): LayerDefinder {
           val: 1200,
           label: '1200IU',
           referanceID: '',
-          style:{
+          style: {
             label_font: '13px serif'
+          }
+        }
+      ]
+    },
+    {
+      type: 'drag',
+      debug: false,
+      elements_padding_right: 25,
+      elements_padding_top: 5,
+      elements: [
+        {
+          name: 'brand',
+          x: 140,
+          y: 5,
+          w: 90,
+          h: 30,
+          val: 0,
+          label: 'Brand 1',
+          referanceID: '',
+          style: {
+            label_font: 'bold 13px serif',
+            label_fillStyle: 'white',
+            label_offset_x: 45,
+            label_offset_y: -11,
+            label_textAlign: 'center'
+          }
+        },
+        {
+          name: 'brand',
+          x: 140,
+          y: 40,
+          w: 90,
+          h: 30,
+          val: 0,
+          label: 'Brand 2',
+          referanceID: '',
+          style: {
+            label_font: 'bold 13px serif',
+            label_fillStyle: 'white',
+            label_offset_x: 45,
+            label_offset_y: -11,
+            label_textAlign: 'center'
+          }
+        },
+        {
+          name: 'brand',
+          x: 140,
+          y: 75,
+          w: 90,
+          h: 30,
+          val: 0,
+          label: 'Brand 3',
+          referanceID: '',
+          style: {
+            label_font: 'bold 13px serif',
+            label_fillStyle: 'white',
+            label_offset_x: 45,
+            label_offset_y: -11,
+            label_textAlign: 'center'
+          }
+        },
+        {
+          name: 'brand',
+          x: 140,
+          y: 110,
+          w: 90,
+          h: 30,
+          val: 0,
+          label: 'Brand 4',
+          referanceID: '',
+          style: {
+            label_font: 'bold 13px serif',
+            label_fillStyle: 'white',
+            label_offset_x: 45,
+            label_offset_y: -11,
+            label_textAlign: 'center'
+          }
+        },
+        {
+          name: 'brand',
+          x: 235,
+          y: 5,
+          w: 90,
+          h: 30,
+          val: 0,
+          label: 'Brand 5',
+          referanceID: '',
+          style: {
+            label_font: 'bold 13px serif',
+            label_fillStyle: 'white',
+            label_offset_x: 45,
+            label_offset_y: -11,
+            label_textAlign: 'center'
+          }
+        },
+        {
+          name: 'brand',
+          x: 235,
+          y: 40,
+          w: 90,
+          h: 30,
+          val: 0,
+          label: 'Brand 6',
+          referanceID: '',
+          style: {
+            label_font: 'bold 13px serif',
+            label_fillStyle: 'white',
+            label_offset_x: 45,
+            label_offset_y: -11,
+            label_textAlign: 'center'
+          }
+        },
+        {
+          name: 'brand',
+          x: 235,
+          y: 75,
+          w: 90,
+          h: 30,
+          val: 0,
+          label: 'Brand 7',
+          referanceID: '',
+          style: {
+            label_font: 'bold 13px serif',
+            label_fillStyle: 'white',
+            label_offset_x: 45,
+            label_offset_y: -11,
+            label_textAlign: 'center'
+          }
+        },
+        {
+          name: 'brand',
+          x: 235,
+          y: 110,
+          w: 90,
+          h: 30,
+          val: 0,
+          label: 'Brand 8',
+          referanceID: '',
+          style: {
+            label_font: 'bold 13px serif',
+            label_fillStyle: 'white',
+            label_offset_x: 45,
+            label_offset_y: -11,
+            label_textAlign: 'center'
           }
         }
       ]
@@ -186,7 +339,7 @@ function getCalendarElements(
         val: 0,
         label: 'Day 1',
         referanceID: '',
-        style:{
+        style: {
           label_font: 'bold 10px arial',
           label_offset_x: 20,
           label_offset_y: -52,

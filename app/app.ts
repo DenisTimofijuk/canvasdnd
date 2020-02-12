@@ -1,6 +1,6 @@
 import { loadImage, getPleaseWait } from './models/loaders';
 import { SpriteSheet } from './models/SpriteSheet';
-import EventsHandler from './models/event handlers';
+import EventsHandler from './models/handlers/event handlers';
 import Compositor from './models/compositor';
 import Grid from './models/grid';
 import { TileName, LayerType } from './models/layout';
@@ -39,7 +39,7 @@ export class CanvasCalendar {
   }
 
   async initLoader() {
-    const image = await loadImage('./img/CanvasDnD.png');
+    const image = await loadImage('./img/CanvasDnD_2.png');
     this.sprites = new SpriteSheet(image);
     const _this = this;
 
