@@ -1,5 +1,5 @@
 import { TileName, LayerElemen, LabelStyle } from './layout';
-import { drawEntityLabel, drawEntityBorder } from './helpers/helpers for draw';
+import { drawEntityLabel, drawEntityBorder, drawTotalLables } from './helpers/helpers for draw';
 
 const CHILDREN_OFFSET_TOP = 25;
 const CHILDREN_OFFSET_LEFT = 15;
@@ -40,6 +40,8 @@ export class Entity {
   }
 
   draw(ctx: CanvasRenderingContext2D, debug?: boolean) {
+    const DISPLAY_CHILDRENS = false;
+    const DISPLAY_TOTALS = true;
     const x = this.x - this.EXPAND_SIZE;
     const y = this.y - this.EXPAND_SIZE;
     const width = this.width + this.EXPAND_SIZE;
@@ -51,7 +53,12 @@ export class Entity {
     if (debug) {
       drawEntityBorder(ctx, x, y, width, height);
     }
-    this.drawChildrens(ctx);
+    if(DISPLAY_CHILDRENS){
+      this.drawChildrens(ctx);
+    }
+    if(DISPLAY_TOTALS){
+      this.drawTotals(ctx);
+    }
   }
 
   hoverOver() {
@@ -71,6 +78,43 @@ export class Entity {
       y >= this.y &&
       y <= this.y + this.height
     );
+  }
+
+  drawTotals(ctx: CanvasRenderingContext2D) {
+    const x_start = this.x + CHILDREN_OFFSET_LEFT;
+    const y_start = this.y + CHILDREN_OFFSET_TOP;
+
+    const totals: Map<TileName, { image: HTMLCanvasElement, total: number }> = new Map();
+    for (let index = 0; index < this.childs.length; index++) {
+      let entity = this.childs[index];
+      let currentTotal = 0;
+      if (totals.has(entity.name)) {
+        currentTotal = totals.get(entity.name).total;
+      }
+      totals.set(entity.name, {
+        image: entity.image,
+        total: currentTotal + entity.val
+      })
+    }
+    
+    const style: LabelStyle = {
+      label_font: 'bold 12px arial',
+      label_fillStyle: 'black',
+      label_offset_x: 0,
+      label_offset_y: CHILDREN_SIZE - 2
+    }
+    let y = 0;
+    totals.forEach(total => {
+      ctx.drawImage(
+        total.image,
+        x_start,
+        y_start + y,
+        CHILDREN_SIZE,
+        CHILDREN_SIZE
+      );
+      drawTotalLables(ctx, x_start + CHILDREN_SIZE, y_start + y, total.total.toString(), style);
+      y += CHILDREN_SIZE;
+    })
   }
 
   drawChildrens(ctx: CanvasRenderingContext2D) {

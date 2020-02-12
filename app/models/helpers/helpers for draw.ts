@@ -54,3 +54,22 @@ export function drawEntityLabel(ctx: CanvasRenderingContext2D, x: number, y: num
     }
     ctx.restore();
 }
+
+export function drawTotalLables(ctx: CanvasRenderingContext2D, x: number, y: number, label: string, style:LabelStyle) {
+    const label_offset_x = style && style.label_offset_x !== undefined ? style.label_offset_x : 0;
+    const label_offset_y = style && style.label_offset_y !== undefined ? style.label_offset_y : 0;
+    ctx.save();
+    if (style) {
+        if (style.label_font) {
+            ctx.font = style.label_font;
+        }
+        if (style.label_fillStyle) {
+            ctx.fillStyle = style.label_fillStyle;
+        }
+        if (style.label_textAlign) {
+            ctx.textAlign = style.label_textAlign;
+        }
+    }
+    ctx.fillText(label, (x + label_offset_x), (y + label_offset_y));
+    ctx.restore();
+}
