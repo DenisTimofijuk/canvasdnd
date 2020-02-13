@@ -1,6 +1,6 @@
 import { SpriteSheet } from "./SpriteSheet";
 import { Entity } from "./Entity";
-import { itemLayer, defineLayersWithElements, LayerType } from "./layout";
+import { itemLayer, defineLayersWithElements, LayerType } from "./setup/layout";
 import { PopUp } from "./popUp";
 
 export type LayerElements = {

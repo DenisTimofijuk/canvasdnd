@@ -2,7 +2,7 @@ import { Entity } from '../Entity';
 import { getPossition, getEntityParameters } from '../helpers/get helpers';
 import Compositor from '../compositor';
 import Grid from '../grid';
-import { LayerType } from '../layout';
+import { LayerType } from '../setup/layout';
 import { LayerElements } from '../createLayers';
 import { PopUp } from '../popUp';
 import { cursorHandler } from './cursor handler';

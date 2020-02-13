@@ -1,7 +1,7 @@
 import { SpriteSheet } from "./SpriteSheet";
 import { createLayers, Layer } from "./createLayers";
 import { Entity } from "./Entity";
-import { LayerType } from "./layout";
+import { LayerType } from "./setup/layout";
 
 export default class Compositor {
     canvas: HTMLCanvasElement;

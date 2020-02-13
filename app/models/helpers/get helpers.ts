@@ -1,5 +1,5 @@
 import { Entity } from '../Entity';
-import { LayerElemen } from '../layout';
+import { LayerElemen } from '../setup/layout';
 
 export function getEntityParameters(availableEntity: Entity): LayerElemen {
   return {

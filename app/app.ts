@@ -3,8 +3,8 @@ import { SpriteSheet } from './models/SpriteSheet';
 import EventsHandler from './models/handlers/event handlers';
 import Compositor from './models/compositor';
 import Grid from './models/grid';
-import { TileName, LayerType } from './models/layout';
-import { defineTiles } from './models/define tiles';
+import { TileName, LayerType } from './models/setup/layout';
+import { defineTiles } from './models/setup/define tiles';
 
 export class CanvasCalendar {
   placeHolder: HTMLElement;

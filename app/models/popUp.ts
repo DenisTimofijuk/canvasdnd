@@ -1,6 +1,6 @@
 import { drawEntityLabel, drawEntityBorder } from './helpers/helpers for draw';
 import { Entity } from './Entity';
-import { LabelStyle } from './layout';
+import { LabelStyle } from './setup/layout';
 
 const CHILDREN_OFFSET_TOP = 140;
 const CHILDREN_OFFSET_LEFT = 50;

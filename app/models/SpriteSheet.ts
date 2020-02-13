@@ -1,4 +1,4 @@
-import { TileName } from "./layout";
+import { TileName } from "./setup/layout";
 
 
 export class SpriteSheet {

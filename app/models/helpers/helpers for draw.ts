@@ -1,5 +1,5 @@
 import { Entity } from "../Entity";
-import { LabelStyle } from "../layout";
+import { LabelStyle } from "../setup/layout";
 
 export function drawEntityBorder(
     ctx: CanvasRenderingContext2D,

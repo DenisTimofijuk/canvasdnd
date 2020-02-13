@@ -1,4 +1,4 @@
-import { TileName, LayerElemen, LabelStyle } from './layout';
+import { TileName, LayerElemen, LabelStyle } from './setup/layout';
 import { drawEntityLabel, drawEntityBorder, drawTotalLables } from './helpers/helpers for draw';
 
 const CHILDREN_OFFSET_TOP = 25;

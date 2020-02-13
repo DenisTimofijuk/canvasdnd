@@ -1,4 +1,4 @@
-import { LayerType } from "../layout";
+import { LayerType } from "../setup/layout";
 import Grid from "../grid";
 
 export function cursorHandler(
