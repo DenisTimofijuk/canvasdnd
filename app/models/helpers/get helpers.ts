@@ -1,5 +1,6 @@
 import { Entity } from '../Entity';
-import { LayerElemen } from '../setup/layout';
+import { LayerElemen, LayerType } from '../setup/layout';
+import Grid from '../grid';
 
 export function getEntityParameters(availableEntity: Entity): LayerElemen {
   return {
@@ -32,4 +33,19 @@ export function getPossition(e: MouseEvent | TouchEvent) {
     x: x,
     y: y
   };
+}
+
+export function getEntityFromGrid(e: MouseEvent | TouchEvent, gridName: LayerType, grid: Map<LayerType, Array<Grid>>) {
+  const possition = getPossition(e);
+  const x = possition.x;
+  const y = possition.y;
+
+  const availableDroppable: Array<Entity> = [];
+  grid.get(gridName).forEach(gridLayer => {
+    const droppable = gridLayer.getEntity(x, y);
+    if (droppable) {
+      availableDroppable.push(droppable);
+    }
+  });
+  return availableDroppable;
 }

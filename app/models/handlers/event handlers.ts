@@ -1,5 +1,5 @@
 import { Entity } from '../Entity';
-import { getPossition, getEntityParameters } from '../helpers/get helpers';
+import { getPossition, getEntityParameters, getEntityFromGrid } from '../helpers/get helpers';
 import Compositor from '../compositor';
 import Grid from '../grid';
 import { LayerType } from '../setup/layout';
@@ -98,6 +98,7 @@ export default class EventsHandler {
       case 'mousedown':
         this.getDraggable(e);
         this.popupHandler(e);
+        this.removeElement(e);
         break;
       case 'touchmove':
       case 'mousemove':
@@ -107,6 +108,22 @@ export default class EventsHandler {
       case 'mouseup':
         this.appendToDroppable(e);
         break;
+    }
+  }
+
+  removeElement(e: MouseEvent | TouchEvent) {
+    if (!this.popupActive) {
+      return;
+    }
+
+    const entityToRemove = getEntityFromGrid(e, 'droppablePopUp_UI', this.grid)
+
+    if (entityToRemove.length > 0) {
+      const parent = entityToRemove[0].parentEntity;
+      const index = parent.childs.indexOf(entityToRemove[0]);
+      parent.childs.splice(index, 1);
+      //this.droppablePopUpUILayer[0].elements = parent.childs;
+      this.compositor.updateBufferLayer('droppablePopUp_UI');
     }
   }
 
@@ -126,7 +143,7 @@ export default class EventsHandler {
     this.droppablePopUpUILayer[0].elements.length = 0;
     this.grid.delete('droppablePopUp_UI');
 
-    const availableDroppable = this.getDroppable(e);
+    const availableDroppable = getEntityFromGrid(e, 'drop', this.grid)
 
     if (availableDroppable.length > 0) {
       this.popupActive = true;
@@ -136,6 +153,7 @@ export default class EventsHandler {
     } else {
       this.popupActive = false;
     }
+
     this.compositor.updateBufferLayer('droppablePopUp');
     this.compositor.updateBufferLayer('droppablePopUp_UI');
   }
@@ -165,12 +183,11 @@ export default class EventsHandler {
 
     const availableDraggable: Entity[] = [];
     const _this = this;
-    this.grid.get('drag').forEach(gridLayer => {
-      const draggable = gridLayer.getEntity(x, y);
-      if (draggable) {
-        availableDraggable.push(draggable);
-      }
-    });
+    const draggable = getEntityFromGrid(e, 'drag', this.grid);
+    if(draggable.length > 0){
+      availableDraggable.push(draggable[0]);
+    }
+
     if (availableDraggable.length > 0) {
       availableDraggable.forEach(availableEntity => {
         const draggable = new Entity(
@@ -186,9 +203,6 @@ export default class EventsHandler {
   }
 
   moveItem(e: MouseEvent | TouchEvent) {
-    if (this.popupActive) {
-      return;
-    }
     const _this = this;
     const possition = getPossition(e);
     const x = possition.x;
@@ -202,7 +216,7 @@ export default class EventsHandler {
       });
       this.compositor.updateBufferLayer('draggable');
     } else {
-      cursorHandler(_this.canvas, _this.grid, x, y);
+      cursorHandler(_this.canvas, _this.grid, x, y, this.popupActive);
     }
   }
 
@@ -210,7 +224,7 @@ export default class EventsHandler {
     if (this.popupActive) {
       return;
     }
-    const availableDroppable = this.getDroppable(e);
+    const availableDroppable = getEntityFromGrid(e, 'drop', this.grid);
 
     availableDroppable.forEach(droppable => {
       if (droppable && this.draggableLayer[0].elements.length > 0) {
@@ -231,20 +245,6 @@ export default class EventsHandler {
     this.compositor.updateBufferLayer('draggable');
   }
 
-  getDroppable(e: MouseEvent | TouchEvent) {
-    const possition = getPossition(e);
-    const x = possition.x;
-    const y = possition.y;
-
-    const availableDroppable: Array<Entity> = [];
-    this.grid.get('drop').forEach(gridLayer => {
-      const droppable = gridLayer.getEntity(x, y);
-      if (droppable) {
-        availableDroppable.push(droppable);
-      }
-    });
-    return availableDroppable;
-  }
 }
 
 function isNotReadyToGetDraggable(e: MouseEvent | TouchEvent, flag: boolean) {
@@ -253,7 +253,6 @@ function isNotReadyToGetDraggable(e: MouseEvent | TouchEvent, flag: boolean) {
 
   return (
     (touchE.type === 'touchstart' && !flag) ||
-    (clickE.type === 'mousedown' &&
-      !(clickE.button === 0 && clickE.buttons === 1 && flag))
+    (clickE.type === 'mousedown' && !(clickE.button === 0 && clickE.buttons === 1 && flag))
   );
 }
