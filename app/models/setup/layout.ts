@@ -1,7 +1,7 @@
 // PLEASE NOTE
 // PLACING ITEMS ON THE SCREEN NEEDS TO BE VERY PRECISE WITH THE COORDINATES
 // THEY SHOULD ALLIGN WITH THE GRID.
-// TO TEST PLEASE USE displayBorderForTest();
+// TO TEST PLEASE USE debug = TRUE;
 
 export type TileName =
   | 'calendar'
@@ -41,6 +41,7 @@ export type LayerType =
   | 'drop'
   | 'grid'
   | 'draggable'
+  | 'droppable_UI'
   | 'droppablePopUp'
   | 'droppablePopUp_UI';
 export type LayerDefinder = Array<{

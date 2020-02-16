@@ -1,6 +1,5 @@
 import { SpriteSheet } from "./SpriteSheet";
 import { createLayers, Layer } from "./createLayers";
-import { Entity } from "./Entity";
 import { LayerType } from "./setup/layout";
 
 export default class Compositor {
@@ -22,6 +21,9 @@ export default class Compositor {
     }
 
     addBuffer(name: LayerType) {
+        if(this.buffers.has(name)){
+            return;
+        }
         const bufferCanvas = document.createElement('canvas');
         bufferCanvas.width = this.canvas.width;
         bufferCanvas.height = this.canvas.height;

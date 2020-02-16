@@ -6,6 +6,11 @@ import { LayerType } from '../setup/layout';
 import { LayerElements } from '../createLayers';
 import { PopUp } from '../popUp';
 import { cursorHandler } from './cursor handler';
+import { _setPopUpChildrenCoordinates } from '../helpers/helpers for draw';
+import { getParam_Popup_Children_Layer } from '../setup/style/popup children';
+
+export type DroppablePopUpUILayer = { elements: Entity[]; debug: boolean; elements_padding_right: number; elements_padding_top: number; };
+type DroppablePopUpLayer = { elements: PopUp[]; debug: boolean; elements_padding_right: number; elements_padding_top: number; };
 
 export default class EventsHandler {
   flag: boolean;
@@ -16,13 +21,9 @@ export default class EventsHandler {
   compositor: Compositor;
   canvas: HTMLCanvasElement;
   grid: Map<LayerType, Array<Grid>>;
-  droppablePopUpLayer: {
-    elements: PopUp[];
-    debug: boolean;
-    elements_padding_right: number;
-    elements_padding_top: number;
-  }[];
+  droppablePopUpLayer: Array<DroppablePopUpLayer>;
   popupActive: boolean;
+  droppablePopUpUILayer: Array<DroppablePopUpUILayer>;
 
   constructor(
     canvas: HTMLCanvasElement,
@@ -47,6 +48,14 @@ export default class EventsHandler {
     this.droppablePopUpLayer = [
       {
         elements: [] as Array<PopUp>,
+        debug: false,
+        elements_padding_right: 0,
+        elements_padding_top: 0
+      }
+    ];
+    this.droppablePopUpUILayer = [
+      {
+        elements: [] as Array<Entity>,
         debug: false,
         elements_padding_right: 0,
         elements_padding_top: 0
@@ -77,6 +86,9 @@ export default class EventsHandler {
     this.compositor.addBuffer('draggable');
     this.compositor.layers.set('droppablePopUp', this.droppablePopUpLayer);
     this.compositor.addBuffer('droppablePopUp');
+    this.compositor.layers.set('droppablePopUp_UI', this.droppablePopUpUILayer);
+    this.compositor.addBuffer('droppablePopUp_UI');
+
   }
 
   update(e: MouseEvent | TouchEvent) {
@@ -111,16 +123,32 @@ export default class EventsHandler {
     }
 
     this.droppablePopUpLayer[0].elements.length = 0;
+    this.droppablePopUpUILayer[0].elements.length = 0;
+    this.grid.delete('droppablePopUp_UI');
+
     const availableDroppable = this.getDroppable(e);
 
     if (availableDroppable.length > 0) {
       this.popupActive = true;
       const popUp = new PopUp(availableDroppable[0]);
       this.droppablePopUpLayer[0].elements.push(popUp);
+      this.popupUIhandler(popUp);
     } else {
       this.popupActive = false;
     }
     this.compositor.updateBufferLayer('droppablePopUp');
+    this.compositor.updateBufferLayer('droppablePopUp_UI');
+  }
+
+  popupUIhandler(popUp: PopUp) {
+    const layerParam = getParam_Popup_Children_Layer();
+    this.droppablePopUpUILayer[0].elements = [].concat(popUp.entity.childs);
+    this.droppablePopUpUILayer[0].debug = layerParam.debug;
+    this.droppablePopUpUILayer[0].elements_padding_right = layerParam.children_elements_padding_right;
+
+    _setPopUpChildrenCoordinates(this.droppablePopUpUILayer[0].elements, popUp);
+
+    this.grid.set('droppablePopUp_UI', [new Grid(this.droppablePopUpUILayer[0])]);
   }
 
   getDraggable(e: MouseEvent | TouchEvent) {
@@ -189,6 +217,7 @@ export default class EventsHandler {
         this.draggableLayer[0].elements.forEach(element => {
           const entity = element as Entity;
           droppable.addChild(entity);
+          entity.parentEntity = droppable;
         });
       }
     });
@@ -218,7 +247,7 @@ export default class EventsHandler {
   }
 }
 
-function isNotReadyToGetDraggable(e: MouseEvent | TouchEvent, flag:boolean) {
+function isNotReadyToGetDraggable(e: MouseEvent | TouchEvent, flag: boolean) {
   const touchE = e as TouchEvent;
   const clickE = e as MouseEvent;
 

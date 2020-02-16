@@ -1,11 +1,13 @@
 import { TileName, LayerElemen, LabelStyle } from './setup/layout';
 import { drawEntityLabel, drawEntityBorder, drawTotalLables } from './helpers/helpers for draw';
+import { getStyle_Entity_Total, getEntity_display_params } from './setup/style/entity style';
 
-const CHILDREN_OFFSET_TOP = 25;
-const CHILDREN_OFFSET_LEFT = 15;
-const CHILDREN_OFFSET_RIGHT = 25;
-const CHILDREN_OFFSET_BOTTOM = 15;
-const CHILDREN_SIZE = 15;
+const entityStyle = getStyle_Entity_Total();
+const CHILDREN_OFFSET_TOP = entityStyle.CHILDREN_OFFSET_TOP;
+const CHILDREN_OFFSET_LEFT = entityStyle.CHILDREN_OFFSET_LEFT;
+const CHILDREN_OFFSET_RIGHT = entityStyle.CHILDREN_OFFSET_RIGHT;
+const CHILDREN_OFFSET_BOTTOM = entityStyle.CHILDREN_OFFSET_BOTTOM;
+const CHILDREN_SIZE = entityStyle.CHILDREN_SIZE;
 
 export class Entity {
   image: HTMLCanvasElement;
@@ -20,6 +22,8 @@ export class Entity {
   childs: Array<Entity>;
   EXPAND_SIZE: number;
   style: LabelStyle;
+  visible: boolean;
+  parentEntity:Entity;
 
   constructor(
     image: HTMLCanvasElement,
@@ -37,11 +41,16 @@ export class Entity {
     this.referanceID = p.referanceID;
     this.childs = [];
     this.EXPAND_SIZE = 0;
+    this.visible = true;
+    this.parentEntity = undefined;
   }
 
   draw(ctx: CanvasRenderingContext2D, debug?: boolean) {
-    const DISPLAY_CHILDRENS = false;
-    const DISPLAY_TOTALS = true;
+    if(!this.visible){
+      return;
+    }
+    const DISPLAY_CHILDRENS = getEntity_display_params().DISPLAY_CHILDRENS;
+    const DISPLAY_TOTALS = getEntity_display_params().DISPLAY_TOTALS;
     const x = this.x - this.EXPAND_SIZE;
     const y = this.y - this.EXPAND_SIZE;
     const width = this.width + this.EXPAND_SIZE;
@@ -97,12 +106,7 @@ export class Entity {
       })
     }
     
-    const style: LabelStyle = {
-      label_font: 'bold 12px arial',
-      label_fillStyle: 'black',
-      label_offset_x: 0,
-      label_offset_y: CHILDREN_SIZE - 2
-    }
+    const style: LabelStyle = entityStyle.style;
     let y = 0;
     totals.forEach(total => {
       ctx.drawImage(

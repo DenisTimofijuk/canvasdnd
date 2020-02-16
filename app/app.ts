@@ -80,6 +80,7 @@ export class CanvasCalendar {
     const _this = this;
     const gridBufferCanv = this.compositor.buffers.get('grid');
     const gridBufferCtx = gridBufferCanv.getContext('2d');
+    gridBufferCtx.clearRect(0,0,gridBufferCanv.width, gridBufferCanv.height);
     this.compositor.layers.forEach((compositorlayer, name) => {
       compositorlayer.forEach((layer, layerIndex) => {
         if (layer.debug && _this.grid.has(name)) {
@@ -95,6 +96,7 @@ export class CanvasCalendar {
 
   update() {
     this.compositor.draw();
+    // this.displayGridForDebugging(); //TEMP: remove after debugging;
     window.requestAnimationFrame(() => {
       this.update();
     });
