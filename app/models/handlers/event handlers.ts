@@ -96,9 +96,9 @@ export default class EventsHandler {
     switch (e.type) {
       case 'touchstart':
       case 'mousedown':
+        this.removeElementFromPopUp(e);  
         this.getDraggable(e);
         this.popupHandler(e);
-        this.removeElement(e);
         break;
       case 'touchmove':
       case 'mousemove':
@@ -111,19 +111,21 @@ export default class EventsHandler {
     }
   }
 
-  removeElement(e: MouseEvent | TouchEvent) {
+  removeElementFromPopUp(e: MouseEvent | TouchEvent) {
     if (!this.popupActive) {
       return;
     }
-
-    const entityToRemove = getEntityFromGrid(e, 'droppablePopUp_UI', this.grid)
+    const entityToRemove = getEntityFromGrid(e, 'droppablePopUp_UI', this.grid);
 
     if (entityToRemove.length > 0) {
       const parent = entityToRemove[0].parentEntity;
       const index = parent.childs.indexOf(entityToRemove[0]);
-      parent.childs.splice(index, 1);
-      //this.droppablePopUpUILayer[0].elements = parent.childs;
-      this.compositor.updateBufferLayer('droppablePopUp_UI');
+      if(index > -1){
+        parent.childs.splice(index, 1);
+        this.droppablePopUpUILayer[0].elements = [].concat(parent.childs);
+        this.compositor.updateBufferLayer('droppablePopUp_UI');
+        this.compositor.updateBufferLayer('drop');
+      }
     }
   }
 
@@ -132,10 +134,7 @@ export default class EventsHandler {
     const x = possition.x;
     const y = possition.y;
 
-    if (
-      this.popupActive &&
-      this.droppablePopUpLayer[0].elements[0].checkCoord(x, y)
-    ) {
+    if (this.popupActive && this.droppablePopUpLayer[0].elements[0].checkCoord(x, y)) {
       return;
     }
 
@@ -225,10 +224,10 @@ export default class EventsHandler {
       return;
     }
     const availableDroppable = getEntityFromGrid(e, 'drop', this.grid);
-
+    const _this = this;
     availableDroppable.forEach(droppable => {
-      if (droppable && this.draggableLayer[0].elements.length > 0) {
-        this.draggableLayer[0].elements.forEach(element => {
+      if (droppable && _this.draggableLayer[0].elements.length > 0) {
+        _this.draggableLayer[0].elements.forEach(element => {
           const entity = element as Entity;
           droppable.addChild(entity);
           entity.parentEntity = droppable;
@@ -240,9 +239,9 @@ export default class EventsHandler {
     this.deltaX = 0;
     this.deltaY = 0;
     this.flag = true;
-
-    this.compositor.updateBufferLayer('drop');
+    
     this.compositor.updateBufferLayer('draggable');
+    this.compositor.updateBufferLayer('drop');
   }
 
 }
