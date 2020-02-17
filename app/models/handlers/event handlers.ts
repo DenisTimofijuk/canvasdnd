@@ -1,5 +1,9 @@
 import { Entity } from '../Entity';
-import { getPossition, getEntityParameters, getEntityFromGrid } from '../helpers/get helpers';
+import {
+  getPossition,
+  getEntityParameters,
+  getEntityFromGrid
+} from '../helpers/get helpers';
 import Compositor from '../compositor';
 import Grid from '../grid';
 import { LayerType } from '../setup/layout';
@@ -9,11 +13,21 @@ import { cursorHandler } from './cursor handler';
 import { _setPopUpChildrenCoordinates } from '../helpers/helpers for draw';
 import { getParam_Popup_Children_Layer } from '../setup/style/popup children';
 
-export type DroppablePopUpUILayer = { elements: Entity[]; debug: boolean; elements_padding_right: number; elements_padding_top: number; };
-type DroppablePopUpLayer = { elements: PopUp[]; debug: boolean; elements_padding_right: number; elements_padding_top: number; };
+export type DroppablePopUpUILayer = {
+  elements: Entity[];
+  debug: boolean;
+  elements_padding_right: number;
+  elements_padding_top: number;
+};
+type DroppablePopUpLayer = {
+  elements: PopUp[];
+  debug: boolean;
+  elements_padding_right: number;
+  elements_padding_top: number;
+};
 
 export default class EventsHandler {
-  flag: boolean;
+  getDraggableAvailability: boolean;
   deltaX: number;
   deltaY: number;
   draggableLayer: Array<LayerElements>;
@@ -34,7 +48,7 @@ export default class EventsHandler {
     this.grid = grid;
     this.canvas = canvas;
     this.compositor = compositor;
-    this.flag = true;
+    this.getDraggableAvailability = true;
     this.deltaX = 0;
     this.deltaY = 0;
     this.draggableLayer = [
@@ -88,7 +102,6 @@ export default class EventsHandler {
     this.compositor.addBuffer('droppablePopUp');
     this.compositor.layers.set('droppablePopUp_UI', this.droppablePopUpUILayer);
     this.compositor.addBuffer('droppablePopUp_UI');
-
   }
 
   update(e: MouseEvent | TouchEvent) {
@@ -96,7 +109,7 @@ export default class EventsHandler {
     switch (e.type) {
       case 'touchstart':
       case 'mousedown':
-        this.removeElementFromPopUp(e);  
+        this.removeElementFromPopUp(e);
         this.getDraggable(e);
         this.popupHandler(e);
         break;
@@ -120,11 +133,10 @@ export default class EventsHandler {
     if (entityToRemove.length > 0) {
       const parent = entityToRemove[0].parentEntity;
       const index = parent.childs.indexOf(entityToRemove[0]);
-      if(index > -1){
+      if (index > -1) {
         parent.childs.splice(index, 1);
         this.droppablePopUpUILayer[0].elements = [].concat(parent.childs);
-        this.compositor.updateBufferLayer('droppablePopUp_UI');
-        this.compositor.updateBufferLayer('drop');
+        this.updateBufferLayer(['droppablePopUp_UI', 'drop']);
       }
     }
   }
@@ -134,7 +146,10 @@ export default class EventsHandler {
     const x = possition.x;
     const y = possition.y;
 
-    if (this.popupActive && this.droppablePopUpLayer[0].elements[0].checkCoord(x, y)) {
+    if (
+      this.popupActive &&
+      this.droppablePopUpLayer[0].elements[0].checkCoord(x, y)
+    ) {
       return;
     }
 
@@ -142,7 +157,7 @@ export default class EventsHandler {
     this.droppablePopUpUILayer[0].elements.length = 0;
     this.grid.delete('droppablePopUp_UI');
 
-    const availableDroppable = getEntityFromGrid(e, 'drop', this.grid)
+    const availableDroppable = getEntityFromGrid(e, 'drop', this.grid);
 
     if (availableDroppable.length > 0) {
       this.popupActive = true;
@@ -153,8 +168,7 @@ export default class EventsHandler {
       this.popupActive = false;
     }
 
-    this.compositor.updateBufferLayer('droppablePopUp');
-    this.compositor.updateBufferLayer('droppablePopUp_UI');
+    this.updateBufferLayer(['droppablePopUp', 'droppablePopUp_UI']);
   }
 
   popupUIhandler(popUp: PopUp) {
@@ -165,14 +179,16 @@ export default class EventsHandler {
 
     _setPopUpChildrenCoordinates(this.droppablePopUpUILayer[0].elements, popUp);
 
-    this.grid.set('droppablePopUp_UI', [new Grid(this.droppablePopUpUILayer[0])]);
+    this.grid.set('droppablePopUp_UI', [
+      new Grid(this.droppablePopUpUILayer[0])
+    ]);
   }
 
   getDraggable(e: MouseEvent | TouchEvent) {
     if (this.popupActive) {
       return;
     }
-    if (isNotReadyToGetDraggable(e, this.flag)) {
+    if (isNotReadyToGetDraggable(e, this.getDraggableAvailability)) {
       return;
     }
 
@@ -183,22 +199,20 @@ export default class EventsHandler {
     const availableDraggable: Entity[] = [];
     const _this = this;
     const draggable = getEntityFromGrid(e, 'drag', this.grid);
-    if(draggable.length > 0){
+    if (draggable.length > 0) {
       availableDraggable.push(draggable[0]);
     }
 
-    if (availableDraggable.length > 0) {
-      availableDraggable.forEach(availableEntity => {
-        const draggable = new Entity(
-          availableEntity.image,
-          getEntityParameters(availableEntity)
-        );
-        _this.deltaX = x - availableEntity.x;
-        _this.deltaY = y - availableEntity.y;
-        _this.flag = false;
-        _this.draggableLayer[0].elements.push(draggable);
-      });
-    }
+    availableDraggable.forEach(availableEntity => {
+      const draggable = new Entity(
+        availableEntity.image,
+        getEntityParameters(availableEntity)
+      );
+      _this.deltaX = x - availableEntity.x;
+      _this.deltaY = y - availableEntity.y;
+      _this.getDraggableAvailability = false;
+      _this.draggableLayer[0].elements.push(draggable);
+    });
   }
 
   moveItem(e: MouseEvent | TouchEvent) {
@@ -213,7 +227,7 @@ export default class EventsHandler {
         entity.x = x - _this.deltaX;
         entity.y = y - _this.deltaY;
       });
-      this.compositor.updateBufferLayer('draggable');
+      this.updateBufferLayer(['draggable']);
     } else {
       cursorHandler(_this.canvas, _this.grid, x, y, this.popupActive);
     }
@@ -238,12 +252,15 @@ export default class EventsHandler {
     this.draggableLayer[0].elements.length = 0;
     this.deltaX = 0;
     this.deltaY = 0;
-    this.flag = true;
-    
-    this.compositor.updateBufferLayer('draggable');
-    this.compositor.updateBufferLayer('drop');
+    this.getDraggableAvailability = true;
+
+    this.updateBufferLayer(['draggable', 'drop']);
   }
 
+  updateBufferLayer(names: Array<LayerType>) {
+    const _this = this;
+    names.forEach(name => _this.compositor.updateBufferLayer(name));
+  }
 }
 
 function isNotReadyToGetDraggable(e: MouseEvent | TouchEvent, flag: boolean) {
@@ -252,6 +269,7 @@ function isNotReadyToGetDraggable(e: MouseEvent | TouchEvent, flag: boolean) {
 
   return (
     (touchE.type === 'touchstart' && !flag) ||
-    (clickE.type === 'mousedown' && !(clickE.button === 0 && clickE.buttons === 1 && flag))
+    (clickE.type === 'mousedown' &&
+      !(clickE.button === 0 && clickE.buttons === 1 && flag))
   );
 }
