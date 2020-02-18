@@ -41,11 +41,14 @@ export function getEntityFromGrid(e: MouseEvent | TouchEvent, gridName: LayerTyp
   const x = possition.x;
   const y = possition.y;
 
-  const availableDroppable: Array<Entity> = [];
+  const availableDroppable: Array<{popupAvailabe:boolean, element:Entity}> = [];
   grid.get(gridName).forEach(gridLayer => {
     const droppable = gridLayer.getEntity(x, y);
     if (droppable) {
-      availableDroppable.push(droppable);
+      availableDroppable.push({
+        popupAvailabe: gridLayer.popupAvailable,
+        element: droppable
+      });
     }
   });
   return availableDroppable;

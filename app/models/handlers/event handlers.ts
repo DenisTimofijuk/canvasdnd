@@ -110,6 +110,7 @@ export default class EventsHandler {
       case 'touchstart':
       case 'mousedown':
         this.removeElementFromPopUp(e);
+        this.removeChildrensFromEntityOnPreview(e);
         this.getDraggable(e);
         this.popupHandler(e);
         break;
@@ -142,9 +143,9 @@ export default class EventsHandler {
 
     const availableDroppable = getEntityFromGrid(e, 'drop', this.grid);
 
-    if (availableDroppable.length > 0) {
+    if (availableDroppable.length > 0 && availableDroppable[0].popupAvailabe) {
       this.popupActive = true;
-      const popUp = new PopUp(availableDroppable[0]);
+      const popUp = new PopUp(availableDroppable[0].element);
       this.droppablePopUpLayer[0].elements.push(popUp);
       this.popupUIhandler(popUp);
     } else {
@@ -183,7 +184,7 @@ export default class EventsHandler {
     const _this = this;
     const draggable = getEntityFromGrid(e, 'drag', this.grid);
     if (draggable.length > 0) {
-      availableDraggable.push(draggable[0]);
+      availableDraggable.push(draggable[0].element);
     }
 
     availableDraggable.forEach(availableEntity => {
@@ -226,8 +227,8 @@ export default class EventsHandler {
       if (droppable && _this.draggableLayer[0].elements.length > 0) {
         _this.draggableLayer[0].elements.forEach(element => {
           const entity = element as Entity;
-          droppable.addChild(entity);
-          entity.parentEntity = droppable;
+          droppable.element.addChild(entity);
+          entity.parentEntity = droppable.element;
         });
       }
     });
@@ -247,12 +248,20 @@ export default class EventsHandler {
     const entityToRemove = getEntityFromGrid(e, 'droppablePopUp_UI', this.grid);
     
     entityToRemove.forEach(entity => {
-      const parent = entity.parentEntity;
-      parent.removeChild(entity);
+      const parent = entity.element.parentEntity;
+      parent.removeChild(entity.element);
       this.droppablePopUpUILayer[0].elements = [].concat(parent.childs);
     })
     
     this.updateBufferLayer(['droppablePopUp_UI', 'drop']);
+  }
+
+  removeChildrensFromEntityOnPreview(e: MouseEvent | TouchEvent){
+    if (this.popupActive) {
+      return;
+    }
+    console.log(this.grid)
+    //const entityToRemove = getEntityFromGrid(e, 'droppablePopUp_UI', this.grid);
   }
 
   updateBufferLayer(names: Array<LayerType>) {

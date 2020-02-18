@@ -5,7 +5,7 @@ import { TileName, LayerType } from "../layout";
 // THEY SHOULD ALLIGN WITH THE GRID.
 // TO TEST PLEASE USE debug = TRUE;
 
-export type LayerDefinder = Array<{
+export type LayerParameters = {
     type: LayerType;
     debug: boolean;
     elements_padding_right?: number; //padding is done mannually by defining coordinates, but this parameter is still required for the grid, please use [debug = true] to get elements alligned with the grid correctly
@@ -13,7 +13,11 @@ export type LayerDefinder = Array<{
     elements: itemLayer;
     display_childrens?: boolean;
     display_totals?: boolean;
-}>;
+    popupAvailable?:boolean;
+    delete_childrens_on_preview?:boolean;
+}
+
+export type LayerDefinder = Array<LayerParameters>;
 
 export type LabelParameters = {
     font?: string;
@@ -348,6 +352,7 @@ export function getLayer_QP4(): LayerDefinder {
             display_totals: true,
             elements_padding_right: CALENDAR_PADDING_RIGHT,
             elements_padding_top: CALENDAR_PADDING_TOP,
+            popupAvailable: true,
             elements: getCalendarElements('calendar', 7, 4, 11, 300, 70, 70)
         }
     ];

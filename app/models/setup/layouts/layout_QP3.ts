@@ -8,6 +8,7 @@ export function getLayer_QP3(): LayerDefinder {
             elements_padding_right: 5,
             display_childrens: true,
             display_totals: true,
+            delete_childrens_on_preview: true,
             elements: [
                 {
                     name: 'document',

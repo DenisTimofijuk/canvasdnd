@@ -5,6 +5,7 @@ import { LabelStyle, LayerElemen } from './setup/layouts/layout_QP4';
 export type EntityOptions = {
   display_childrens?: boolean;
   display_totals?: boolean;
+  delete_childrens_on_preview?:boolean;
 }
 
 export class Entity {
@@ -118,6 +119,7 @@ export class Entity {
   }
 
   drawChildrens(ctx: CanvasRenderingContext2D) {
+    //use same approach as PopUpUI - grid system - different layer...
     const childrenStyle = this.style && this.style.children ? this.style.children : {
       offset_top: 0,
       offset_left: 0,

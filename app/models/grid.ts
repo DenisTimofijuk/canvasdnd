@@ -10,11 +10,13 @@ export default class Grid {
     trim_y:number;
     PADDING_RIGHT: number;
     PADDING_TOP: number;
+    popupAvailable: boolean;
     constructor(layer: LayerElements) {
         const elements = layer.elements as Array<Entity>;
         this.entities = elements;
         this.PADDING_RIGHT = layer.elements_padding_right;
         this.PADDING_TOP = layer.elements_padding_top;
+        this.popupAvailable = layer.popupAvailable;
         this.grid = [];
         this.define();
     }
