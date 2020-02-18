@@ -1,6 +1,7 @@
 import { Entity } from '../Entity';
-import { LayerElemen, LayerType } from '../setup/layout';
+import { LayerType } from '../setup/layout';
 import Grid from '../grid';
+import { LayerElemen } from '../setup/layouts/layout_QP4';
 
 export function getEntityParameters(availableEntity: Entity): LayerElemen {
   return {

@@ -1,13 +1,11 @@
-import { TileName, LayerElemen, LabelStyle } from './setup/layout';
+import { TileName } from './setup/layout';
 import { drawEntityLabel, drawEntityBorder, drawTotalLables } from './helpers/helpers for draw';
-import { getStyle_Entity_Total, getEntity_display_params } from './setup/style/entity style';
+import { LabelStyle, LayerElemen } from './setup/layouts/layout_QP4';
 
-const entityStyle = getStyle_Entity_Total();
-const CHILDREN_OFFSET_TOP = entityStyle.CHILDREN_OFFSET_TOP;
-const CHILDREN_OFFSET_LEFT = entityStyle.CHILDREN_OFFSET_LEFT;
-const CHILDREN_OFFSET_RIGHT = entityStyle.CHILDREN_OFFSET_RIGHT;
-const CHILDREN_OFFSET_BOTTOM = entityStyle.CHILDREN_OFFSET_BOTTOM;
-const CHILDREN_SIZE = entityStyle.CHILDREN_SIZE;
+export type EntityOptions = {
+  display_childrens?: boolean;
+  display_totals?: boolean;
+}
 
 export class Entity {
   image: HTMLCanvasElement;
@@ -20,15 +18,17 @@ export class Entity {
   label: string;
   referanceID: string;
   childs: Array<Entity>;
-  EXPAND_SIZE: number;
   style: LabelStyle;
   visible: boolean;
-  parentEntity:Entity;
+  parentEntity: Entity;
+  options?: EntityOptions;
 
   constructor(
     image: HTMLCanvasElement,
-    p: LayerElemen
+    p: LayerElemen,
+    options?: EntityOptions
   ) {
+    this.options = options ? options : {};
     this.name = p.name;
     this.image = image;
     this.width = p.w ? p.w : image.width;
@@ -40,44 +40,31 @@ export class Entity {
     this.style = p.style;
     this.referanceID = p.referanceID;
     this.childs = [];
-    this.EXPAND_SIZE = 0;
     this.visible = true;
     this.parentEntity = undefined;
   }
 
   draw(ctx: CanvasRenderingContext2D, debug?: boolean) {
-    if(!this.visible){
+    if (!this.visible) {
       return;
     }
-    const DISPLAY_CHILDRENS = getEntity_display_params().DISPLAY_CHILDRENS;
-    const DISPLAY_TOTALS = getEntity_display_params().DISPLAY_TOTALS;
-    const x = this.x - this.EXPAND_SIZE;
-    const y = this.y - this.EXPAND_SIZE;
-    const width = this.width + this.EXPAND_SIZE;
-    const height = this.height + this.EXPAND_SIZE;
+    const x = this.x;
+    const y = this.y;
+    const width = this.width;
+    const height = this.height;
     ctx.drawImage(this.image, x, y, width, height);
     if (this.label.length > 0 && this.label !== ' ') {
-      drawEntityLabel(ctx, x, y, width, height, this.label, this.style);
+      drawEntityLabel(ctx, x, y, width, height, this.label, this.style.label);
     }
     if (debug) {
       drawEntityBorder(ctx, x, y, width, height);
     }
-    if(DISPLAY_CHILDRENS){
+    if (this.options.display_childrens) {
       this.drawChildrens(ctx);
     }
-    if(DISPLAY_TOTALS){
+    if (this.options.display_totals) {
       this.drawTotals(ctx);
     }
-  }
-
-  hoverOver() {
-    //currently not using
-    this.EXPAND_SIZE = 1;
-  }
-
-  hoverOut() {
-    //currently not using
-    this.EXPAND_SIZE = 0;
   }
 
   checkCoord(x: number, y: number) {
@@ -90,8 +77,18 @@ export class Entity {
   }
 
   drawTotals(ctx: CanvasRenderingContext2D) {
-    const x_start = this.x + CHILDREN_OFFSET_LEFT;
-    const y_start = this.y + CHILDREN_OFFSET_TOP;
+    const childrenStyle = this.style && this.style.total ? this.style.total : {
+      icon: {
+        offset_top: 0,
+        offset_left: 0,
+        size: 35
+      },
+      label:{
+
+      }
+    };
+    const x_start = this.x + childrenStyle.icon.offset_left;
+    const y_start = this.y + childrenStyle.icon.offset_top;
 
     const totals: Map<TileName, { image: HTMLCanvasElement, total: number }> = new Map();
     for (let index = 0; index < this.childs.length; index++) {
@@ -105,46 +102,65 @@ export class Entity {
         total: currentTotal + entity.val
       })
     }
-    
-    const style: LabelStyle = entityStyle.style;
+
     let y = 0;
     totals.forEach(total => {
       ctx.drawImage(
         total.image,
         x_start,
         y_start + y,
-        CHILDREN_SIZE,
-        CHILDREN_SIZE
+        childrenStyle.icon.size,
+        childrenStyle.icon.size
       );
-      drawTotalLables(ctx, x_start + CHILDREN_SIZE, y_start + y, total.total.toString(), style);
-      y += CHILDREN_SIZE;
+      drawTotalLables(ctx, x_start + childrenStyle.icon.size, y_start + y, total.total.toString(), childrenStyle.label);
+      y += childrenStyle.icon.size;
     })
   }
 
   drawChildrens(ctx: CanvasRenderingContext2D) {
-    const x_start = this.x + CHILDREN_OFFSET_LEFT;
-    const y_start = this.y + CHILDREN_OFFSET_TOP;
-    const boxHeight = this.height - CHILDREN_OFFSET_BOTTOM - CHILDREN_OFFSET_TOP;
-    const rowLen = this.width - CHILDREN_OFFSET_RIGHT - CHILDREN_OFFSET_LEFT;
+    const childrenStyle = this.style && this.style.children ? this.style.children : {
+      offset_top: 0,
+      offset_left: 0,
+      offset_right: 0,
+      offset_bottom: 0,
+      size: 35,
+      label:{
+
+      }
+    };
+    const x_start = this.x + childrenStyle.offset_left;
+    const y_start = this.y + childrenStyle.offset_top;
+    const boxHeight = this.height - childrenStyle.offset_bottom - childrenStyle.offset_top;
+    const rowLen = this.width - childrenStyle.offset_right - childrenStyle.offset_left;
 
     for (let index = 0; index < this.childs.length; index++) {
       let entity = this.childs[index];
-      const x = (index * CHILDREN_SIZE) % rowLen;
-      const y = Math.floor((index * CHILDREN_SIZE) / rowLen) * CHILDREN_SIZE;
-      if (y > boxHeight - CHILDREN_SIZE) {
+      const x = (index * childrenStyle.size) % rowLen;
+      const y = Math.floor((index * childrenStyle.size) / rowLen) * childrenStyle.size;
+      if (y > boxHeight - childrenStyle.size) {
         break;
       }
       ctx.drawImage(
         entity.image,
         x_start + x,
         y_start + y,
-        CHILDREN_SIZE,
-        CHILDREN_SIZE
+        childrenStyle.size,
+        childrenStyle.size
       );
+      if (entity.label.length > 0 && entity.label !== ' ') {
+        drawEntityLabel(ctx, x_start + x, y_start + y, childrenStyle.size, childrenStyle.size, entity.label, childrenStyle.label);
+      }
     }
   }
 
   addChild(element: Entity) {
     this.childs.push(element);
+  }
+
+  removeChild(element: Entity) {
+    const index = this.childs.indexOf(element);
+    if (index > -1) {
+      this.childs.splice(index, 1);
+    }
   }
 }

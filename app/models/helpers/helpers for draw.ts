@@ -1,7 +1,7 @@
 import { Entity } from "../Entity";
-import { LabelStyle } from "../setup/layout";
 import { PopUp } from "../popUp";
 import { getStyle_Popup_Children } from "../setup/style/popup children";
+import { LabelStyle, LabelParameters } from "../setup/layouts/layout_QP4";
 
 export function drawEntityBorder(
     ctx: CanvasRenderingContext2D,
@@ -17,19 +17,19 @@ export function drawEntityBorder(
     ctx.closePath();
 }
 
-export function drawEntityLabel(ctx: CanvasRenderingContext2D, x: number, y: number, width: number, height: number, label: string, style: LabelStyle) {
-    const label_offset_x = style && style.label_offset_x !== undefined ? style.label_offset_x : 0;
-    const label_offset_y = style && style.label_offset_y !== undefined ? style.label_offset_y : 0;
+export function drawEntityLabel(ctx: CanvasRenderingContext2D, x: number, y: number, width: number, height: number, label: string, style: LabelParameters) {
+    const label_offset_x = style && style.offset_x !== undefined ? style.offset_x : 0;
+    const label_offset_y = style && style.offset_y !== undefined ? style.offset_y : 0;
     ctx.save();
     if (style) {
-        if (style.label_font) {
-            ctx.font = style.label_font;
+        if (style.font) {
+            ctx.font = style.font;
         }
-        if (style.label_fillStyle) {
-            ctx.fillStyle = style.label_fillStyle;
+        if (style.fillStyle) {
+            ctx.fillStyle = style.fillStyle;
         }
-        if (style.label_textAlign) {
-            ctx.textAlign = style.label_textAlign;
+        if (style.textAlign) {
+            ctx.textAlign = style.textAlign;
         }
     }
 
@@ -57,19 +57,19 @@ export function drawEntityLabel(ctx: CanvasRenderingContext2D, x: number, y: num
     ctx.restore();
 }
 
-export function drawTotalLables(ctx: CanvasRenderingContext2D, x: number, y: number, label: string, style: LabelStyle) {
-    const label_offset_x = style && style.label_offset_x !== undefined ? style.label_offset_x : 0;
-    const label_offset_y = style && style.label_offset_y !== undefined ? style.label_offset_y : 0;
+export function drawTotalLables(ctx: CanvasRenderingContext2D, x: number, y: number, label: string, style: LabelParameters) {
+    const label_offset_x = style && style.offset_x !== undefined ? style.offset_x : 0;
+    const label_offset_y = style && style.offset_y !== undefined ? style.offset_y : 0;
     ctx.save();
     if (style) {
-        if (style.label_font) {
-            ctx.font = style.label_font;
+        if (style.font) {
+            ctx.font = style.font;
         }
-        if (style.label_fillStyle) {
-            ctx.fillStyle = style.label_fillStyle;
+        if (style.fillStyle) {
+            ctx.fillStyle = style.fillStyle;
         }
-        if (style.label_textAlign) {
-            ctx.textAlign = style.label_textAlign;
+        if (style.textAlign) {
+            ctx.textAlign = style.textAlign;
         }
     }
     ctx.fillText(label, (x + label_offset_x), (y + label_offset_y));

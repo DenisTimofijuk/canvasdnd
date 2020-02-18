@@ -124,23 +124,6 @@ export default class EventsHandler {
     }
   }
 
-  removeElementFromPopUp(e: MouseEvent | TouchEvent) {
-    if (!this.popupActive) {
-      return;
-    }
-    const entityToRemove = getEntityFromGrid(e, 'droppablePopUp_UI', this.grid);
-
-    if (entityToRemove.length > 0) {
-      const parent = entityToRemove[0].parentEntity;
-      const index = parent.childs.indexOf(entityToRemove[0]);
-      if (index > -1) {
-        parent.childs.splice(index, 1);
-        this.droppablePopUpUILayer[0].elements = [].concat(parent.childs);
-        this.updateBufferLayer(['droppablePopUp_UI', 'drop']);
-      }
-    }
-  }
-
   popupHandler(e: MouseEvent | TouchEvent) {
     const possition = getPossition(e);
     const x = possition.x;
@@ -255,6 +238,21 @@ export default class EventsHandler {
     this.getDraggableAvailability = true;
 
     this.updateBufferLayer(['draggable', 'drop']);
+  }
+
+  removeElementFromPopUp(e: MouseEvent | TouchEvent) {
+    if (!this.popupActive) {
+      return;
+    }
+    const entityToRemove = getEntityFromGrid(e, 'droppablePopUp_UI', this.grid);
+    
+    entityToRemove.forEach(entity => {
+      const parent = entity.parentEntity;
+      parent.removeChild(entity);
+      this.droppablePopUpUILayer[0].elements = [].concat(parent.childs);
+    })
+    
+    this.updateBufferLayer(['droppablePopUp_UI', 'drop']);
   }
 
   updateBufferLayer(names: Array<LayerType>) {

@@ -4,7 +4,7 @@ import EventsHandler from './models/handlers/event handlers';
 import Compositor from './models/compositor';
 import Grid from './models/grid';
 import { TileName, LayerType } from './models/setup/layout';
-import { defineTiles } from './models/setup/define tiles';
+import { defineTiles, getTiles } from './models/setup/define tiles'; 
 
 export class CanvasCalendar {
   placeHolder: HTMLElement;
@@ -26,7 +26,12 @@ export class CanvasCalendar {
     this.grid = new Map();
     const _this = this;
 
-    this.initLoader().then(loadTile => {
+    this.initLoader().then(async loadTile => {
+      // const tiles = (await getTiles('./json/tiles.json')).tiles;
+      // tiles.forEach(tile =>
+      //   loadTile(tile.name, tile.x, tile.y, tile.w, tile.h)
+      // );
+
       defineTiles().forEach(tile =>
         loadTile(tile.name, tile.x, tile.y, tile.w, tile.h)
       );

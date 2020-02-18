@@ -1,7 +1,7 @@
 import { drawEntityLabel, drawEntityBorder } from './helpers/helpers for draw';
 import { Entity } from './Entity';
-import { LabelStyle } from './setup/layout';
 import { getStyle_Popup_Label } from './setup/style/popup label';
+import { LabelStyle } from './setup/layouts/layout_QP4';
 
 export class PopUp {
   entity: Entity;
@@ -28,7 +28,7 @@ export class PopUp {
     ctx.drawImage(this.entity.image, this.x, this.y, this.width, this.height);
     if (this.entity.label.length > 0 && this.entity.label !== ' ') {
       const style: LabelStyle = getStyle_Popup_Label();
-      drawEntityLabel(ctx, this.x, this.y, this.width, this.height, this.entity.label, style);
+      drawEntityLabel(ctx, this.x, this.y, this.width, this.height, this.entity.label, style.label);
     }
     if (debug) {
       drawEntityBorder(ctx, this.x, this.y, this.width, this.height);
