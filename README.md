@@ -1,2 +1,2 @@
-# canvasdnd
-Canvas Drag and Drop
+# Canvas Drag and Drop
+With TypeScript, Webpack, Babel
