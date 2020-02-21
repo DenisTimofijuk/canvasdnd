@@ -101,7 +101,10 @@ export class CanvasCalendar {
 
   update() {
     this.compositor.draw();
-    // this.displayGridForDebugging(); //TEMP: remove after debugging;
+    
+    // Use below to display grid for additional layers:
+    this.displayGridForDebugging();
+
     window.requestAnimationFrame(() => {
       this.update();
     });

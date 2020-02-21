@@ -27,7 +27,7 @@ export function getStyle_Popup_Children() {
 
 export function getParam_Popup_Children_Layer() {
     return {
-        debug: false,
+        debug: true,
         children_elements_padding_right: 5
     }
 }
