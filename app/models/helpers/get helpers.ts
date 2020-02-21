@@ -8,6 +8,7 @@ export function getEntityParameters(availableEntity: Entity): LayerElemen {
     h: availableEntity.height,
     label: availableEntity.label,
     name: availableEntity.name,
+    id: availableEntity.id,
     referanceID: availableEntity.referanceID,
     val: availableEntity.val,
     w: availableEntity.width,
@@ -42,14 +43,16 @@ export function getEntityFromGrid(e: MouseEvent | TouchEvent, gridName: LayerTyp
   const y = possition.y;
 
   const availableDroppable: Array<{popupAvailabe:boolean, element:Entity}> = [];
-  grid.get(gridName).forEach(gridLayer => {
-    const droppable = gridLayer.getEntity(x, y);
-    if (droppable) {
-      availableDroppable.push({
-        popupAvailabe: gridLayer.popupAvailable,
-        element: droppable
-      });
-    }
-  });
+  if(grid.has(gridName)){
+    grid.get(gridName).forEach(gridLayer => {
+      const droppable = gridLayer.getEntity(x, y);
+      if (droppable) {
+        availableDroppable.push({
+          popupAvailabe: gridLayer.popupAvailable,
+          element: droppable
+        });
+      }
+    });
+  }
   return availableDroppable;
 }

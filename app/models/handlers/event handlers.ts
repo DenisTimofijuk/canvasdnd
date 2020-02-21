@@ -16,6 +16,7 @@ import { getParam_Popup_Children_Layer } from '../setup/style/popup children';
 export type DroppablePopUpUILayer = {
   elements: Entity[];
   debug: boolean;
+  grid: boolean;
   elements_padding_right: number;
   elements_padding_top: number;
 };
@@ -23,6 +24,7 @@ export type DroppablePopUpUILayer = {
 type DroppablePopUpLayer = {
   elements: PopUp[];
   debug: boolean;
+  grid: boolean;
   elements_padding_right: number;
   elements_padding_top: number;
 };
@@ -42,6 +44,7 @@ export default class EventsHandler {
   popupActive: boolean;
   droppablePopUpUILayer: Array<DroppablePopUpUILayer>;
   additionalLayers: AdditionalLayers;
+  droppedItemsLayer: { elements: Entity[]; debug: boolean; grid: boolean; elements_padding_right: number; elements_padding_top: number; }[];
 
   constructor(
     canvas: HTMLCanvasElement,
@@ -60,6 +63,7 @@ export default class EventsHandler {
       {
         elements: [] as Array<Entity>,
         debug: false,
+        grid: true,
         elements_padding_right: 0,
         elements_padding_top: 0
       }
@@ -68,6 +72,7 @@ export default class EventsHandler {
       {
         elements: [] as Array<PopUp>,
         debug: false,
+        grid: true,
         elements_padding_right: 0,
         elements_padding_top: 0
       }
@@ -76,6 +81,16 @@ export default class EventsHandler {
       {
         elements: [] as Array<Entity>,
         debug: false,
+        grid: true,
+        elements_padding_right: 0,
+        elements_padding_top: 0
+      }
+    ];
+    this.droppedItemsLayer = [
+      {
+        elements: [] as Array<Entity>,
+        debug: false,
+        grid: true,
         elements_padding_right: 0,
         elements_padding_top: 0
       }
@@ -102,6 +117,7 @@ export default class EventsHandler {
     this.additionalLayers.set('draggable', this.draggableLayer);
     this.additionalLayers.set('droppablePopUp', this.droppablePopUpLayer);
     this.additionalLayers.set('droppablePopUp_UI', this.droppablePopUpUILayer);
+    this.additionalLayers.set('droppedItems', this.droppedItemsLayer);
 
     this.setAdditionalBuffers();
   }
@@ -160,7 +176,7 @@ export default class EventsHandler {
       this.popupActive = true;
       const popUp = new PopUp(availableDroppable[0].element);
       popUp_layer[0].elements.push(popUp);
-      this.popupUIhandler(popUp, popUp_UI_layer_NAME);
+      this.displayChildrens(popUp_UI_layer_NAME, popUp.entity.childs, popUp.x, popUp.y, popUp.width, popUp.height);
     } else {
       this.popupActive = false;
     }
@@ -168,20 +184,45 @@ export default class EventsHandler {
     this.updateBufferLayer([popUp_layer_NAME, popUp_UI_layer_NAME]);
   }
 
-  popupUIhandler(popUp: PopUp, name:LayerType) {
+  displayChildrens(name:LayerType, entities: Array<Entity>, parent_x:number, parent_y:number, parent_w:number, parent_h:number) {
+    // this.grid.delete(name);
+
     const layerParam = getParam_Popup_Children_Layer();
 
     const layer = this.additionalLayers.get(name);
 
-    layer[0].elements = [].concat(popUp.entity.childs);
+    layer[0].elements = [].concat(entities);
     layer[0].debug = layerParam.debug;
     layer[0].elements_padding_right = layerParam.children_elements_padding_right;
 
-    _setPopUpChildrenCoordinates(layer[0].elements as Array<Entity>, popUp);
+    _setPopUpChildrenCoordinates(layer[0].elements as Array<Entity>, parent_x, parent_y, parent_w, parent_h);
 
     this.grid.set(name, [
       new Grid(layer[0])
     ]);
+  }
+
+  
+  updateChildrenLayer(parent:Entity){
+    const name = parent.id;
+
+    if(this.compositor.layers.has(name)){
+      const layer = this.compositor.layers.get(name);
+      
+      console.log("[updateChildrenLayer] layer name:", name)
+      
+      layer[0].elements = [].concat(parent.childs);
+      layer[0].debug = false; //TODO
+      layer[0].elements_padding_right = 0; //TODO
+
+      //Some kind a bug: childs dissapears after remove action on popup
+      //debug mode activates on children layer. something is mixed up here
+      //popup layer dissapears or being replaced with childrent layer after remove action
+      //parent element should not be popup, but enttity it self.
+      _setPopUpChildrenCoordinates(layer[0].elements as Array<Entity>, parent.x, parent.y, parent.width, parent.height, true);
+
+      this.updateBufferLayer([name]);
+    }
   }
 
   getDraggable(e: MouseEvent | TouchEvent, name:LayerType) {
@@ -250,6 +291,7 @@ export default class EventsHandler {
           droppable.element.addChild(entity);
           entity.parentEntity = droppable.element;
         });
+        this.updateChildrenLayer(droppable.element);
       }
     });
 
@@ -265,6 +307,7 @@ export default class EventsHandler {
     if (!this.popupActive) {
       return;
     }
+    const _this = this;
     const layer = this.additionalLayers.get(name);
     const entityToRemove = getEntityFromGrid(e, name, this.grid);
     
@@ -272,6 +315,8 @@ export default class EventsHandler {
       const parent = entity.element.parentEntity;
       parent.removeChild(entity.element);
       layer[0].elements = [].concat(parent.childs);
+      
+      _this.updateChildrenLayer(parent);
     })
     
     this.updateBufferLayer([name, 'drop']);
@@ -281,7 +326,7 @@ export default class EventsHandler {
     if (this.popupActive) {
       return;
     }
-    console.log(this.grid)
+    //console.log(this.grid)
     //const entityToRemove = getEntityFromGrid(e, 'droppablePopUp_UI', this.grid);
   }
 
@@ -301,3 +346,12 @@ function isNotReadyToGetDraggable(e: MouseEvent | TouchEvent, flag: boolean) {
       !(clickE.button === 0 && clickE.buttons === 1 && flag))
   );
 }
+
+
+/**
+ * every droppable should have individual layer and buffer. Name could b generated according coordinates (same as GRID)
+ * in this way it soulb be easy to ger correct fererance name and perform handlers.
+ * 
+ * every droppable entity could have unique name on layout level ad would have individual layers on setup stage automatically.
+ * main task would be generate correct referance name according mouse coordinates, or we could have master grid for names (we allready have this implemented. Entity could have unique name or ID)
+ */

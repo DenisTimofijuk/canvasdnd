@@ -25,6 +25,27 @@ export function getStyle_Popup_Children() {
     }
 }
 
+export function getStyle_Entitie_Children() {
+    const style: LabelStyle = {
+        label: {
+            font: '9px arial',
+            fillStyle: 'black',
+        }
+    }
+    const CHILDREN_SIZE = 20;
+    const padding_x = 5;
+    const start_x = 0;
+    const start_y = 0;
+
+    return {
+        style: style,
+        CHILDREN_SIZE: CHILDREN_SIZE,
+        padding_x: padding_x,
+        start_x: start_x,
+        start_y: start_y
+    }
+}
+
 export function getParam_Popup_Children_Layer() {
     return {
         debug: true,

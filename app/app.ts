@@ -67,17 +67,18 @@ export class CanvasCalendar {
   }
 
   initGrid() {
-    const gridToLayers: Array<LayerType> = ['drag', 'drop'];
     const _this = this;
-    gridToLayers.forEach(name =>
-      _this.compositor.layers.get(name).forEach(layer => {
-        if (_this.grid.has(name)) {
-          _this.grid.get(name).push(new Grid(layer));
-        } else {
-          _this.grid.set(name, [new Grid(layer)]);
-        }
+    this.compositor.layers.forEach((layers, name) => {
+      layers.forEach(layer => {
+        if(layer.grid){
+          if (_this.grid.has(name)) {
+            _this.grid.get(name).push(new Grid(layer));
+          } else {
+            _this.grid.set(name, [new Grid(layer)]);
+          }
+        }        
       })
-    );
+    })
   }
 
   displayGridForDebugging() {

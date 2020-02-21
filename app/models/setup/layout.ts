@@ -20,11 +20,13 @@ export type LayerType =
   | 'draggable'
   | 'droppable_UI'
   | 'droppablePopUp'
-  | 'droppablePopUp_UI';
+  | 'droppablePopUp_UI'
+  | 'droppedItems'
+  | string;
 
 
 export function defineLayersWithElements(): LayerDefinder {
-  let qid = 'QP3'
+  let qid = 'QP4'
 
   switch (qid) {
     case 'QP3':

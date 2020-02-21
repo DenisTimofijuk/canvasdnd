@@ -5,13 +5,15 @@ export function getLayer_QP3(): LayerDefinder {
         {
             type: 'drop',
             debug: false,
+            grid: true,
             elements_padding_right: 5,
-            display_childrens: true,
+            display_childrens: false, //TODO remove from Entity. Should be on a different layer.
             display_totals: true,
             delete_childrens_on_preview: true,
             elements: [
                 {
                     name: 'document',
+                    id: '',
                     label: '',
                     referanceID: '',
                     val: 0,
@@ -50,10 +52,12 @@ export function getLayer_QP3(): LayerDefinder {
         {
             type: 'drag',
             debug: false,
+            grid: true,
             elements_padding_top: 10,
             elements: [
                 {
                     name: 'pen',
+                    id: '',
                     label: '75ml',
                     referanceID: '',
                     val: 75,
@@ -69,6 +73,7 @@ export function getLayer_QP3(): LayerDefinder {
                 },
                 {
                     name: 'pen',
+                    id: '',
                     label: '95ml',
                     referanceID: '',
                     val: 95,
@@ -84,6 +89,7 @@ export function getLayer_QP3(): LayerDefinder {
                 },
                 {
                     name: 'pen',
+                    id: '',
                     label: '125ml',
                     referanceID: '',
                     val: 125,
@@ -99,6 +105,7 @@ export function getLayer_QP3(): LayerDefinder {
                 },
                 {
                     name: 'hand',
+                    id: '',
                     label: '300IU',
                     referanceID: '',
                     val: 300,
@@ -114,6 +121,7 @@ export function getLayer_QP3(): LayerDefinder {
                 },
                 {
                     name: 'hand',
+                    id: '',
                     label: '600IU',
                     referanceID: '',
                     val: 600,
@@ -129,6 +137,7 @@ export function getLayer_QP3(): LayerDefinder {
                 },
                 {
                     name: 'hand',
+                    id: '',
                     label: '1200IU',
                     referanceID: '',
                     val: 1200,

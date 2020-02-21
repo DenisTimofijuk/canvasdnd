@@ -56,10 +56,12 @@ function isEntityHover(
   y: number
 ) {
   let flag = false;
-  grid.get(name).forEach(gridLayer => {
-    if (gridLayer.getEntity(x, y)) {
-      flag = true;
-    }
-  });
+  if(grid.has(name)){
+    grid.get(name).forEach(gridLayer => {
+      if (gridLayer.getEntity(x, y)) {
+        flag = true;
+      }
+    });
+  }  
   return flag;
 }

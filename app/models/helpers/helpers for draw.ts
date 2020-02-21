@@ -1,6 +1,6 @@
 import { Entity } from "../Entity";
 import { PopUp } from "../popUp";
-import { getStyle_Popup_Children } from "../setup/style/popup children";
+import { getStyle_Popup_Children, getStyle_Entitie_Children } from "../setup/style/popup children";
 import { LabelStyle, LabelParameters } from "../setup/layouts/layout_QP4";
 
 export function drawEntityBorder(
@@ -76,20 +76,28 @@ export function drawTotalLables(ctx: CanvasRenderingContext2D, x: number, y: num
     ctx.restore();
 }
 
-export function _setPopUpChildrenCoordinates(entities: Array<Entity>, popUp: PopUp) {
-    const popup_UI = getStyle_Popup_Children();
-    const start_x = popUp.x + popup_UI.start_x;
-    const start_y = popUp.y + popup_UI.start_y;
-    const container_w = popUp.width;
-    const container_h = popUp.height;
+export function _setPopUpChildrenCoordinates(entities: Array<Entity>, parent_x:number, parent_y:number, parent_w:number, parent_h:number, isForEntities=false) {
+    const popup_UI = isForEntities ? getStyle_Entitie_Children() : getStyle_Popup_Children();
+    const start_x = parent_x + popup_UI.start_x;
+    const start_y = parent_y + popup_UI.start_y;
+    const container_w = parent_w;
+    const container_h = parent_h;
     const CHILDREN_SIZE = popup_UI.CHILDREN_SIZE;
     const padding_x = popup_UI.padding_x;
     const style: LabelStyle = popup_UI.style;
 
     let x = start_x;
     let y = start_y;
+
+    //turetu but skirtingi parametrai ir kvieciama 2x
+    console.trace("[_setPopUpChildrenCoordinates]")
+    console.log({start_x, start_y, container_w, container_h, CHILDREN_SIZE})
+
+    _setPopUpChildrenCoordinates
+
     entities.forEach(entity => {
-        if (y > container_h) {
+        entity.visible = true;
+        if (y > start_y + container_h) {
             entity.visible = false;
             return;
         }
@@ -98,7 +106,7 @@ export function _setPopUpChildrenCoordinates(entities: Array<Entity>, popUp: Pop
         entity.x = x;
         entity.y = y;
         x += CHILDREN_SIZE + padding_x;
-        if (x > container_w) {
+        if (x > start_x + container_w) {
             x = start_x;
             y += CHILDREN_SIZE;
         }
