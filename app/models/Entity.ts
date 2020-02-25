@@ -61,9 +61,6 @@ export class Entity {
     if (debug) {
       drawEntityBorder(ctx, x, y, width, height);
     }
-    // if (this.options.display_childrens) {
-    //   this.drawChildrens(ctx);
-    // }
     if (this.options.display_totals) {
       this.drawTotals(ctx);
     }
@@ -117,43 +114,6 @@ export class Entity {
       drawTotalLables(ctx, x_start + childrenStyle.icon.size, y_start + y, total.total.toString(), childrenStyle.label);
       y += childrenStyle.icon.size;
     })
-  }
-
-  drawChildrens(ctx: CanvasRenderingContext2D) {
-    // //use same approach as PopUpUI - grid system - different layer...
-    // const childrenStyle = this.style && this.style.children ? this.style.children : {
-    //   offset_top: 0,
-    //   offset_left: 0,
-    //   offset_right: 0,
-    //   offset_bottom: 0,
-    //   size: 35,
-    //   label:{
-
-    //   }
-    // };
-    // const x_start = this.x + childrenStyle.offset_left;
-    // const y_start = this.y + childrenStyle.offset_top;
-    // const boxHeight = this.height - childrenStyle.offset_bottom - childrenStyle.offset_top;
-    // const rowLen = this.width - childrenStyle.offset_right - childrenStyle.offset_left;
-
-    // for (let index = 0; index < this.childs.length; index++) {
-    //   let entity = this.childs[index];
-    //   const x = (index * childrenStyle.size) % rowLen;
-    //   const y = Math.floor((index * childrenStyle.size) / rowLen) * childrenStyle.size;
-    //   if (y > boxHeight - childrenStyle.size) {
-    //     break;
-    //   }
-    //   ctx.drawImage(
-    //     entity.image,
-    //     x_start + x,
-    //     y_start + y,
-    //     childrenStyle.size,
-    //     childrenStyle.size
-    //   );
-    //   if (entity.label.length > 0 && entity.label !== ' ') {
-    //     drawEntityLabel(ctx, x_start + x, y_start + y, childrenStyle.size, childrenStyle.size, entity.label, childrenStyle.label);
-    //   }
-    // }
   }
 
   addChild(element: Entity) {

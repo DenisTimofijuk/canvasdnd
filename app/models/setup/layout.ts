@@ -26,7 +26,7 @@ export type LayerType =
 
 
 export function defineLayersWithElements(): LayerDefinder {
-  let qid = 'QP4'
+  let qid = 'QP'
 
   switch (qid) {
     case 'QP3':

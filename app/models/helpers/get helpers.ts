@@ -56,3 +56,13 @@ export function getEntityFromGrid(e: MouseEvent | TouchEvent, gridName: LayerTyp
   }
   return availableDroppable;
 }
+
+export function getLayerTemplate() {
+  return [{
+    elements: [] as Array<Entity>,
+    debug: false,
+    grid: true,
+    elements_padding_right: 0,
+    elements_padding_top: 0
+  }];
+}

@@ -15,17 +15,42 @@ export function getStyle_Popup_Children() {
     const padding_x = 5;
     const start_x = 45;
     const start_y = 158;
+    const margin = 50;
 
     return {
         style: style,
         CHILDREN_SIZE: CHILDREN_SIZE,
         padding_x: padding_x,
         start_x: start_x,
-        start_y: start_y
+        start_y: start_y,
+        margin: margin
     }
 }
 
-export function getStyle_Entitie_Children() {
+export function getStyle_Entitie_Children_QP3() {
+    const style: LabelStyle = {
+        label: {
+            font: '9px arial',
+            fillStyle: 'black',
+        }
+    }
+    const CHILDREN_SIZE = 40;
+    const padding_x = 5;
+    const start_x = 40;
+    const start_y = 35;
+    const margin = 50;
+
+    return {
+        style: style,
+        CHILDREN_SIZE: CHILDREN_SIZE,
+        padding_x: padding_x,
+        start_x: start_x,
+        start_y: start_y,
+        margin: margin
+    }
+}
+
+export function getStyle_Entitie_Children_QP4() {
     const style: LabelStyle = {
         label: {
             font: '9px arial',
@@ -36,13 +61,15 @@ export function getStyle_Entitie_Children() {
     const padding_x = 5;
     const start_x = 0;
     const start_y = 0;
+    const margin = 5;
 
     return {
         style: style,
         CHILDREN_SIZE: CHILDREN_SIZE,
         padding_x: padding_x,
         start_x: start_x,
-        start_y: start_y
+        start_y: start_y,
+        margin: margin
     }
 }
 

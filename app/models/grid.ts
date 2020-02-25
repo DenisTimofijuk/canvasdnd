@@ -11,7 +11,9 @@ export default class Grid {
     PADDING_RIGHT: number;
     PADDING_TOP: number;
     popupAvailable: boolean;
-    constructor(layer: LayerElements) {
+    color: string;
+    constructor(layer: LayerElements, color = "green") {
+        this.color = color;
         const elements = layer.elements as Array<Entity>;
         this.entities = elements;
         this.PADDING_RIGHT = layer.elements_padding_right;
@@ -55,7 +57,7 @@ export default class Grid {
                 let x = colindex * _this.w;
                 let y = rowindex * _this.h;
                 ctx.beginPath()
-                ctx.strokeStyle = "green";
+                ctx.strokeStyle = _this.color;//"green";
                 ctx.rect(x, y, _this.w, _this.h)
                 ctx.stroke();
                 ctx.closePath();

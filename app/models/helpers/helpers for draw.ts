@@ -1,6 +1,6 @@
 import { Entity } from "../Entity";
 import { PopUp } from "../popUp";
-import { getStyle_Popup_Children, getStyle_Entitie_Children } from "../setup/style/popup children";
+import { getStyle_Popup_Children, getStyle_Entitie_Children_QP4, getStyle_Entitie_Children_QP3 } from "../setup/style/popup children";
 import { LabelStyle, LabelParameters } from "../setup/layouts/layout_QP4";
 
 export function drawEntityBorder(
@@ -77,11 +77,11 @@ export function drawTotalLables(ctx: CanvasRenderingContext2D, x: number, y: num
 }
 
 export function _setPopUpChildrenCoordinates(entities: Array<Entity>, parent_x:number, parent_y:number, parent_w:number, parent_h:number, isForEntities=false) {
-    const popup_UI = isForEntities ? getStyle_Entitie_Children() : getStyle_Popup_Children();
+    const popup_UI = isForEntities ? getStyle_Entitie_Children_QP4() : getStyle_Popup_Children();
     const start_x = parent_x + popup_UI.start_x;
     const start_y = parent_y + popup_UI.start_y;
-    const container_w = parent_w;
-    const container_h = parent_h;
+    const container_w = parent_w - popup_UI.margin;
+    const container_h = parent_h - popup_UI.margin;
     const CHILDREN_SIZE = popup_UI.CHILDREN_SIZE;
     const padding_x = popup_UI.padding_x;
     const style: LabelStyle = popup_UI.style;
@@ -89,15 +89,9 @@ export function _setPopUpChildrenCoordinates(entities: Array<Entity>, parent_x:n
     let x = start_x;
     let y = start_y;
 
-    //turetu but skirtingi parametrai ir kvieciama 2x
-    console.trace("[_setPopUpChildrenCoordinates]")
-    console.log({start_x, start_y, container_w, container_h, CHILDREN_SIZE})
-
-    _setPopUpChildrenCoordinates
-
     entities.forEach(entity => {
         entity.visible = true;
-        if (y > start_y + container_h) {
+        if (y + CHILDREN_SIZE > parent_y + container_h) {
             entity.visible = false;
             return;
         }
@@ -106,7 +100,7 @@ export function _setPopUpChildrenCoordinates(entities: Array<Entity>, parent_x:n
         entity.x = x;
         entity.y = y;
         x += CHILDREN_SIZE + padding_x;
-        if (x > start_x + container_w) {
+        if (x + CHILDREN_SIZE > parent_x + container_w) {
             x = start_x;
             y += CHILDREN_SIZE;
         }

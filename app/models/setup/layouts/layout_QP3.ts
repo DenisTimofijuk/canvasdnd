@@ -7,7 +7,7 @@ export function getLayer_QP3(): LayerDefinder {
             debug: false,
             grid: true,
             elements_padding_right: 5,
-            display_childrens: false, //TODO remove from Entity. Should be on a different layer.
+            display_childrens: true,
             display_totals: true,
             delete_childrens_on_preview: true,
             elements: [

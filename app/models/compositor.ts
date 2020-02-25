@@ -48,5 +48,13 @@ export default class Compositor {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         const _this = this;
         this.buffers.forEach(bufferCanv => _this.ctx.drawImage(bufferCanv, 0, 0));
+        
+
+        //temp hack tp have popup drawn allways the last to be on the top
+        //TODO: Popup grid layer is under the popup layer now;
+        // if(this.buffers.has('droppablePopUp') && this.buffers.has('droppablePopUp_UI')){
+        //     this.ctx.drawImage(this.buffers.get('droppablePopUp'), 0, 0);
+        //     this.ctx.drawImage(this.buffers.get('droppablePopUp_UI'), 0, 0);
+        // }
     }
 }
