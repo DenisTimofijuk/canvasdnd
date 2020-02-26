@@ -239,7 +239,6 @@ export default class EventsHandler {
   }
 
   displayChildrens(name:LayerType, entities: Array<Entity>, parent_x:number, parent_y:number, parent_w:number, parent_h:number, flag=false, color="green", clone=true) {
-    console.log(name)
     const layerParam = getParam_Popup_Children_Layer();
     const layer = this.additionalLayers.get(name);
     layer[0].elements = clone ? [].concat(cloneEntities(entities)) : [].concat(entities);
@@ -250,8 +249,6 @@ export default class EventsHandler {
       new Grid(layer[0], color)
     ]);
     this.updateBufferLayer([name]);
-    
-    console.log(this.grid)
   }
 
   removeChildrensFromEntityOnPreview(e: MouseEvent | TouchEvent){

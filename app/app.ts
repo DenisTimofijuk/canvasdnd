@@ -1,4 +1,4 @@
-import { loadImage, getPleaseWait } from './models/loaders';
+import { loadImage, getPleaseWait } from './models/helpers/loaders';
 import { SpriteSheet } from './models/SpriteSheet';
 import EventsHandler from './models/handlers/event handlers';
 import Compositor from './models/compositor';
