@@ -1,10 +1,10 @@
 import { loadImage, getPleaseWait } from './models/helpers/loaders';
 import { SpriteSheet } from './models/SpriteSheet';
-import EventsHandler from './models/handlers/event handlers';
+import EventsListeners from './models/handlers/EventsListeners';
 import Compositor from './models/compositor';
 import Grid from './models/grid';
 import { TileName, LayerType } from './models/setup/layout';
-import { defineTiles, getTiles } from './models/setup/define tiles'; 
+import { defineTiles } from './models/setup/define tiles'; 
 
 export class CanvasCalendar {
   placeHolder: HTMLElement;
@@ -112,7 +112,7 @@ export class CanvasCalendar {
   }
 
   initEventHandler() {
-    new EventsHandler(this.canvas, this.compositor, this.grid);
+    new EventsListeners(this.canvas, this.compositor, this.grid);
   }
 }
 

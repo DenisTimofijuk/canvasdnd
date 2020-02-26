@@ -37,13 +37,20 @@ export function getPossition(e: MouseEvent | TouchEvent) {
   };
 }
 
-export function getEntityFromGrid(e: MouseEvent | TouchEvent, gridName: LayerType, grid: Map<LayerType, Array<Grid>>) {
+export function getEntityFromGrid(
+  e: MouseEvent | TouchEvent,
+  gridName: LayerType,
+  grid: Map<LayerType, Array<Grid>>
+) {
   const possition = getPossition(e);
   const x = possition.x;
   const y = possition.y;
 
-  const availableDroppable: Array<{popupAvailabe:boolean, element:Entity}> = [];
-  if(grid.has(gridName)){
+  const availableDroppable: Array<{
+    popupAvailabe: boolean;
+    element: Entity;
+  }> = [];
+  if (grid.has(gridName)) {
     grid.get(gridName).forEach(gridLayer => {
       const droppable = gridLayer.getEntity(x, y);
       if (droppable) {
@@ -58,11 +65,25 @@ export function getEntityFromGrid(e: MouseEvent | TouchEvent, gridName: LayerTyp
 }
 
 export function getLayerTemplate() {
-  return [{
-    elements: [] as Array<Entity>,
-    debug: false,
-    grid: true,
-    elements_padding_right: 0,
-    elements_padding_top: 0
-  }];
+  return [
+    {
+      elements: [] as Array<Entity>,
+      debug: false,
+      grid: true,
+      elements_padding_right: 0,
+      elements_padding_top: 0
+    }
+  ];
+}
+
+export function cloneEntities(elements: Array<Entity>) {
+  const result: Array<Entity> = [];
+
+  elements.forEach(element => {
+    const clone = new Entity(element.image, getEntityParameters(element));
+    Object.assign(clone, element);
+    result.push(clone);
+  });
+
+  return result;
 }
