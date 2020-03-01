@@ -2,7 +2,7 @@ import { Entity } from '../Entity';
 import Compositor from '../compositor';
 import Grid from '../grid';
 import { LayerType } from '../setup/layout';
-import { _setPopUpChildrenCoordinates } from '../helpers/helpers for draw';
+import { _setChildrenCoordinates } from '../helpers/helpers for draw';
 import EventHanlder from './EventHanlder';
 
 export default class EventsListeners {

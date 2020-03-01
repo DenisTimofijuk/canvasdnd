@@ -9,9 +9,8 @@ import {
   getEntityParameters
 } from '../helpers/get helpers';
 import { Entity } from '../Entity';
-import { getParam_Popup_Children_Layer } from '../setup/style/popup children';
 import {
-  _setPopUpChildrenCoordinates,
+  _setChildrenCoordinates,
   isNotReadyToGetDraggable
 } from '../helpers/helpers for draw';
 import { PopUp } from '../popUp';
@@ -45,10 +44,10 @@ export default class EventHanlder {
     this.additionalLayers = new Map();
 
     this.initAdditionalLayers([
-        'draggable',
-        'droppablePopUp',
-        'droppablePopUp_UI'
-      ]);
+      'draggable',
+      'droppablePopUp',
+      'droppablePopUp_UI'
+    ]);
   }
 
   updateBufferLayer(names: Array<LayerType>) {
@@ -84,22 +83,21 @@ export default class EventHanlder {
     parent_x: number,
     parent_y: number,
     parent_w: number,
-    parent_h: number,
-    geEntityUIStyle = false
+    parent_h: number
   ) {
-    const layerParam = getParam_Popup_Children_Layer();
     const layer = this.additionalLayers.get(name);
     layer[0].elements = [].concat(entities);
-    layer[0].debug = layerParam.debug;
-    layer[0].elements_padding_right =
-      layerParam.children_elements_padding_right;
-    _setPopUpChildrenCoordinates(
+    layer[0].debug = true
+    layer[0].elements_padding_right = 5;
+    layer[0].elements_padding_top = 0;
+
+    _setChildrenCoordinates(
       layer[0].elements as Array<Entity>,
       parent_x,
       parent_y,
       parent_w,
       parent_h,
-      geEntityUIStyle
+      name !== 'droppablePopUp_UI'
     );
     this.grid.set(name, [new Grid(layer[0])]);
     this.updateBufferLayer([name]);
@@ -140,8 +138,7 @@ export default class EventHanlder {
         popUp.x,
         popUp.y,
         popUp.width,
-        popUp.height,
-        false
+        popUp.height
       );
     } else {
       this.popupActive = false;
@@ -163,15 +160,20 @@ export default class EventHanlder {
       parent.removeChild(entity.element);
       layer[0].elements = [].concat(parent.childs);
 
+      let display_childrens = false;
+      _this.compositor.layers.get('drop').forEach(layer => {
+        if (layer.display_childrens) display_childrens = layer.display_childrens
+      })
+      if(display_childrens){
       _this.displayChildrens(
         parent.id,
         cloneEntities(parent.childs),
         parent.x,
         parent.y,
         parent.width,
-        parent.height,
-        true
+        parent.height
       );
+      }
 
       _this.updateBufferLayer(['drop', name]);
     });
@@ -225,15 +227,23 @@ export default class EventHanlder {
           entity.parentEntity = droppable.element;
         });
         _this.initAdditionalLayers([droppable.element.id]);
-        _this.displayChildrens(
-          droppable.element.id,
-          cloneEntities(droppable.element.childs),
-          droppable.element.x,
-          droppable.element.y,
-          droppable.element.width,
-          droppable.element.height,
-          true
-        );
+
+        let display_childrens = false;
+        _this.compositor.layers.get('drop').forEach(layer => {
+          if (layer.display_childrens) display_childrens = layer.display_childrens
+        })
+
+        if (display_childrens) {
+          _this.displayChildrens(
+            droppable.element.id,
+            cloneEntities(droppable.element.childs),
+            droppable.element.x,
+            droppable.element.y,
+            droppable.element.width,
+            droppable.element.height
+          );
+        }
+
       }
     });
     layer[0].elements.length = 0;

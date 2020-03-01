@@ -371,7 +371,7 @@ export function getLayer_QP4(): LayerDefinder {
             debug: false,
             grid: true,
             display_totals: true, // debug how this is compatible with display_childrens
-            display_childrens: true,
+            display_childrens: false,
             elements_padding_right: CALENDAR_PADDING_RIGHT,
             elements_padding_top: CALENDAR_PADDING_TOP,
             popupAvailable: true,

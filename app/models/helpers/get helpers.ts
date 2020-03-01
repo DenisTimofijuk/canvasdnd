@@ -2,6 +2,7 @@ import { Entity } from '../Entity';
 import { LayerType } from '../setup/layout';
 import Grid from '../grid';
 import { LayerElemen } from '../setup/layouts/layout_QP4';
+import { LayerElements } from '../createLayers';
 
 export function getEntityParameters(availableEntity: Entity): LayerElemen {
   return {
@@ -64,7 +65,7 @@ export function getEntityFromGrid(
   return availableDroppable;
 }
 
-export function getLayerTemplate() {
+export function getLayerTemplate(): Array<LayerElements> {
   return [
     {
       elements: [] as Array<Entity>,

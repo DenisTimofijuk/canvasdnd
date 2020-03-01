@@ -1,12 +1,7 @@
 import { Entity } from '../Entity';
-import { PopUp } from '../popUp';
-import {
-  getStyle_Popup_Children,
-  getStyle_Entitie_Children_QP4,
-  getStyle_Entitie_Children_QP3
-} from '../setup/style/popup children';
 import { LabelStyle, LabelParameters } from '../setup/layouts/layout_QP4';
-import { getEntityParameters } from './get helpers';
+import { get_Children_Style } from '../setup/layout';
+import { getStyle_Popup_Children } from '../setup/style/popup';
 
 export function drawEntityBorder(
   ctx: CanvasRenderingContext2D,
@@ -107,24 +102,24 @@ export function drawTotalLables(
   ctx.restore();
 }
 
-export function _setPopUpChildrenCoordinates(
+export function _setChildrenCoordinates(
   entities: Array<Entity>,
   parent_x: number,
   parent_y: number,
   parent_w: number,
   parent_h: number,
-  geEntityUIStyle: boolean
+  isForEntity: boolean
 ) {
-  const popup_UI = geEntityUIStyle
-    ? getStyle_Entitie_Children_QP4()
+  const UI = isForEntity
+    ? get_Children_Style()
     : getStyle_Popup_Children();
-  const start_x = parent_x + popup_UI.start_x;
-  const start_y = parent_y + popup_UI.start_y;
-  const container_w = parent_w - popup_UI.margin;
-  const container_h = parent_h - popup_UI.margin;
-  const CHILDREN_SIZE = popup_UI.CHILDREN_SIZE;
-  const padding_x = popup_UI.padding_x;
-  const style: LabelStyle = popup_UI.style;
+  const start_x = parent_x + UI.start_x;
+  const start_y = parent_y + UI.start_y;
+  const container_w = parent_w - UI.margin;
+  const container_h = parent_h - UI.margin;
+  const CHILDREN_SIZE = UI.CHILDREN_SIZE;
+  const padding_x = UI.padding_x;
+  const style: LabelStyle = UI.style;
 
   let x = start_x;
   let y = start_y;

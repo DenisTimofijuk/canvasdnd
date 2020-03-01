@@ -1,4 +1,4 @@
-import { LayerDefinder } from "./layout_QP4";
+import { LayerDefinder, LabelStyle } from "./layout_QP4";
 
 export function getLayer_QP3(): LayerDefinder {
     return [
