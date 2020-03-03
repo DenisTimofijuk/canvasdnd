@@ -1,5 +1,7 @@
 import { getLayer_QP4, LayerDefinder } from "./layouts/layout_QP4";
 import { getLayer_QP3 } from "./layouts/layout_QP3";
+import { getStyle_Entitie_Children_QP3, getStyle_Entitie_Children_QP4 } from "./style/childrens";
+
 
 export type TileName =
   | 'calendar'
@@ -20,16 +22,27 @@ export type LayerType =
   | 'draggable'
   | 'droppable_UI'
   | 'droppablePopUp'
-  | 'droppablePopUp_UI';
+  | 'droppablePopUp_UI'
+  | 'droppedItems'
+  | string;
 
+
+let QID = 'QP4'
 
 export function defineLayersWithElements(): LayerDefinder {
-  let qid = 'QP3'
-
-  switch (qid) {
+  switch (QID) {
     case 'QP3':
       return getLayer_QP3();
     default:
       return getLayer_QP4();
+  }
+}
+
+export function get_Children_Style() {
+  switch (QID) {
+    case 'QP3':
+      return getStyle_Entitie_Children_QP3();
+    default:
+      return getStyle_Entitie_Children_QP4();
   }
 }

@@ -2,12 +2,14 @@ import { Entity } from '../Entity';
 import { LayerType } from '../setup/layout';
 import Grid from '../grid';
 import { LayerElemen } from '../setup/layouts/layout_QP4';
+import { LayerElements } from '../createLayers';
 
 export function getEntityParameters(availableEntity: Entity): LayerElemen {
   return {
     h: availableEntity.height,
     label: availableEntity.label,
     name: availableEntity.name,
+    id: availableEntity.id,
     referanceID: availableEntity.referanceID,
     val: availableEntity.val,
     w: availableEntity.width,
@@ -36,20 +38,53 @@ export function getPossition(e: MouseEvent | TouchEvent) {
   };
 }
 
-export function getEntityFromGrid(e: MouseEvent | TouchEvent, gridName: LayerType, grid: Map<LayerType, Array<Grid>>) {
+export function getEntityFromGrid(
+  e: MouseEvent | TouchEvent,
+  gridName: LayerType,
+  grid: Map<LayerType, Array<Grid>>
+) {
   const possition = getPossition(e);
   const x = possition.x;
   const y = possition.y;
 
-  const availableDroppable: Array<{popupAvailabe:boolean, element:Entity}> = [];
-  grid.get(gridName).forEach(gridLayer => {
-    const droppable = gridLayer.getEntity(x, y);
-    if (droppable) {
-      availableDroppable.push({
-        popupAvailabe: gridLayer.popupAvailable,
-        element: droppable
-      });
-    }
-  });
+  const availableDroppable: Array<{
+    popupAvailabe: boolean;
+    element: Entity;
+  }> = [];
+  if (grid.has(gridName)) {
+    grid.get(gridName).forEach(gridLayer => {
+      const droppable = gridLayer.getEntity(x, y);
+      if (droppable) {
+        availableDroppable.push({
+          popupAvailabe: gridLayer.popupAvailable,
+          element: droppable
+        });
+      }
+    });
+  }
   return availableDroppable;
+}
+
+export function getLayerTemplate(): Array<LayerElements> {
+  return [
+    {
+      elements: [] as Array<Entity>,
+      debug: false,
+      grid: true,
+      elements_padding_right: 0,
+      elements_padding_top: 0
+    }
+  ];
+}
+
+export function cloneEntities(elements: Array<Entity>) {
+  const result: Array<Entity> = [];
+
+  elements.forEach(element => {
+    const clone = new Entity(element.image, getEntityParameters(element));
+    Object.assign(clone, element);
+    result.push(clone);
+  });
+
+  return result;
 }

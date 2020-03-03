@@ -8,6 +8,7 @@ import { TileName, LayerType } from "../layout";
 export type LayerParameters = {
     type: LayerType;
     debug: boolean;
+    grid:boolean;
     elements_padding_right?: number; //padding is done mannually by defining coordinates, but this parameter is still required for the grid, please use [debug = true] to get elements alligned with the grid correctly
     elements_padding_top?: number; //padding is doen mannually by defining coordinates, but this parameter is still required for the grid, please use [debug = true] to get elements alligned with the grid correctly
     elements: itemLayer;
@@ -49,6 +50,7 @@ export type LabelStyle = {
 
 export type LayerElemen = {
     name: TileName;
+    id:string; //is for drop items. ID should be unique per item to have its own layer. This will be used to display dropped items.
     x: number;
     y: number;
     w: number;
@@ -69,9 +71,11 @@ export function getLayer_QP4(): LayerDefinder {
         {
             type: 'item',
             debug: false,
+            grid: false,
             elements: [
                 {
                     name: 'woman1',
+                    id: '',
                     x: 5,
                     y: 5,
                     w: 100,
@@ -92,10 +96,12 @@ export function getLayer_QP4(): LayerDefinder {
         {
             type: 'drag',
             debug: false,
+            grid: true,
             elements_padding_top: 5,
             elements: [
                 {
                     name: 'pen',
+                    id: '',
                     x: 360,
                     y: 5,
                     w: 60,
@@ -111,6 +117,7 @@ export function getLayer_QP4(): LayerDefinder {
                 },
                 {
                     name: 'pen',
+                    id: '',
                     x: 360,
                     y: 70,
                     w: 60,
@@ -126,6 +133,7 @@ export function getLayer_QP4(): LayerDefinder {
                 },
                 {
                     name: 'pen',
+                    id: '',
                     x: 360,
                     y: 135,
                     w: 60,
@@ -141,6 +149,7 @@ export function getLayer_QP4(): LayerDefinder {
                 },
                 {
                     name: 'hand',
+                    id: '',
                     x: 480,
                     y: 5,
                     w: 60,
@@ -156,6 +165,7 @@ export function getLayer_QP4(): LayerDefinder {
                 },
                 {
                     name: 'hand',
+                    id: '',
                     x: 480,
                     y: 70,
                     w: 60,
@@ -171,6 +181,7 @@ export function getLayer_QP4(): LayerDefinder {
                 },
                 {
                     name: 'hand',
+                    id: '',
                     x: 480,
                     y: 135,
                     w: 60,
@@ -189,11 +200,13 @@ export function getLayer_QP4(): LayerDefinder {
         {
             type: 'drag',
             debug: false,
+            grid: true,
             elements_padding_right: 25,
             elements_padding_top: 5,
             elements: [
                 {
                     name: 'brand',
+                    id: '',
                     x: 140,
                     y: 5,
                     w: 90,
@@ -213,6 +226,7 @@ export function getLayer_QP4(): LayerDefinder {
                 },
                 {
                     name: 'brand',
+                    id: '',
                     x: 140,
                     y: 40,
                     w: 90,
@@ -232,6 +246,7 @@ export function getLayer_QP4(): LayerDefinder {
                 },
                 {
                     name: 'brand',
+                    id: '',
                     x: 140,
                     y: 75,
                     w: 90,
@@ -251,6 +266,7 @@ export function getLayer_QP4(): LayerDefinder {
                 },
                 {
                     name: 'brand',
+                    id: '',
                     x: 140,
                     y: 110,
                     w: 90,
@@ -270,6 +286,7 @@ export function getLayer_QP4(): LayerDefinder {
                 },
                 {
                     name: 'brand',
+                    id: '',
                     x: 235,
                     y: 5,
                     w: 90,
@@ -289,6 +306,7 @@ export function getLayer_QP4(): LayerDefinder {
                 },
                 {
                     name: 'brand',
+                    id: '',
                     x: 235,
                     y: 40,
                     w: 90,
@@ -308,6 +326,7 @@ export function getLayer_QP4(): LayerDefinder {
                 },
                 {
                     name: 'brand',
+                    id: '',
                     x: 235,
                     y: 75,
                     w: 90,
@@ -327,6 +346,7 @@ export function getLayer_QP4(): LayerDefinder {
                 },
                 {
                     name: 'brand',
+                    id: '',
                     x: 235,
                     y: 110,
                     w: 90,
@@ -349,7 +369,9 @@ export function getLayer_QP4(): LayerDefinder {
         {
             type: 'drop',
             debug: false,
-            display_totals: true,
+            grid: true,
+            display_totals: true, // debug how this is compatible with display_childrens
+            display_childrens: false,
             elements_padding_right: CALENDAR_PADDING_RIGHT,
             elements_padding_top: CALENDAR_PADDING_TOP,
             popupAvailable: true,
@@ -374,6 +396,7 @@ function getCalendarElements(
         for (let col = 1; col <= columns; col++) {
             calendars.push({
                 name: name,
+                id: 'droppable_'+x+'_'+y,
                 x: x,
                 y: y,
                 w: element_w,

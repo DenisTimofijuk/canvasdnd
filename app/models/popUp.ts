@@ -1,6 +1,6 @@
 import { drawEntityLabel, drawEntityBorder } from './helpers/helpers for draw';
 import { Entity } from './Entity';
-import { getStyle_Popup_Label } from './setup/style/popup label';
+import { getStyle_Popup_Label } from './setup/style/popup';
 import { LabelStyle } from './setup/layouts/layout_QP4';
 
 export class PopUp {
