@@ -10,10 +10,11 @@ export function getLayer_QP3(): LayerDefinder {
             display_childrens: true,
             display_totals: true,
             delete_childrens_on_preview: true,
+            popupAvailable: false,
             elements: [
                 {
                     name: 'document',
-                    id: '',
+                    id: 'drop_1',
                     label: '',
                     referanceID: '',
                     val: 0,

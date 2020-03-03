@@ -28,6 +28,7 @@ export default class EventHanlder {
   deltaX: number;
   deltaY: number;
   canvas: HTMLCanvasElement;
+  popupAvailable: boolean;
 
   constructor(
     canvas: HTMLCanvasElement,
@@ -42,6 +43,8 @@ export default class EventHanlder {
     this.deltaX = 0;
     this.deltaY = 0;
     this.additionalLayers = new Map();
+
+    this.popupAvailable = this.compositor.layers.get('drop')[0].popupAvailable; //temp workaround for QP3;
 
     this.initAdditionalLayers([
       'draggable',
@@ -147,10 +150,11 @@ export default class EventHanlder {
     this.updateBufferLayer([popUp_layer_NAME, popUp_UI_layer_NAME]);
   }
 
-  removeElementFromPopUp(e: MouseEvent | TouchEvent, name: LayerType) {
-    if (!this.popupActive) {
+  removeElement(e: MouseEvent | TouchEvent, name: LayerType) {
+    if (!this.popupActive && this.popupAvailable) {
       return;
     }
+
     const _this = this;
     const layer = this.additionalLayers.get(name);
     const entityToRemove = this.getEntity(e, name);
@@ -164,15 +168,15 @@ export default class EventHanlder {
       _this.compositor.layers.get('drop').forEach(layer => {
         if (layer.display_childrens) display_childrens = layer.display_childrens
       })
-      if(display_childrens){
-      _this.displayChildrens(
-        parent.id,
-        cloneEntities(parent.childs),
-        parent.x,
-        parent.y,
-        parent.width,
-        parent.height
-      );
+      if (display_childrens) {
+        _this.displayChildrens(
+          parent.id,
+          _this.popupAvailable ? cloneEntities(parent.childs) : parent.childs,
+          parent.x,
+          parent.y,
+          parent.width,
+          parent.height
+        );
       }
 
       _this.updateBufferLayer(['drop', name]);
@@ -180,7 +184,7 @@ export default class EventHanlder {
   }
 
   getDraggable(e: MouseEvent | TouchEvent, name: LayerType) {
-    if (this.popupActive) {
+    if (this.popupActive && this.popupAvailable) {
       return;
     }
     if (isNotReadyToGetDraggable(e, this.getDraggableAvailability)) {
@@ -213,9 +217,10 @@ export default class EventHanlder {
   }
 
   appendToDroppable(e: MouseEvent | TouchEvent, name: LayerType) {
-    if (this.popupActive) {
+    if (this.popupActive && this.popupAvailable) {
       return;
     }
+
     const _this = this;
     const layer = this.additionalLayers.get(name);
     const availableDroppable = this.getEntity(e, 'drop');
@@ -236,7 +241,7 @@ export default class EventHanlder {
         if (display_childrens) {
           _this.displayChildrens(
             droppable.element.id,
-            cloneEntities(droppable.element.childs),
+            _this.popupAvailable ? cloneEntities(droppable.element.childs) : droppable.element.childs,
             droppable.element.x,
             droppable.element.y,
             droppable.element.width,
@@ -271,5 +276,21 @@ export default class EventHanlder {
     } else {
       cursorHandler(this.canvas, this.grid, x, y, this.popupActive);
     }
+  }
+
+  initRemove(e: MouseEvent | TouchEvent) {
+    const layerNames = [];
+    if (!this.popupAvailable) {
+      const drop = this.compositor.layers.get('drop');
+      drop.forEach(layer => layer.elements.forEach(element => {
+        const entity = element as Entity;
+        layerNames.push(entity.id);
+      })
+      )
+    }else{
+      layerNames.push('droppablePopUp_UI');
+    }
+    const _this = this;
+    layerNames.forEach(name => _this.removeElement(e, name))
   }
 }

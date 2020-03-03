@@ -44,7 +44,7 @@ export default class EventsListeners {
     switch (e.type) {
       case 'touchstart':
       case 'mousedown':
-        this.handler.removeElementFromPopUp(e, 'droppablePopUp_UI');
+        this.handler.initRemove(e);
         this.handler.getDraggable(e, 'draggable');
         this.handler.displayPopUp(e);
         break;
