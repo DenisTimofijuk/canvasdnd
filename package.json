@@ -33,6 +33,7 @@
     "handlebars": "^4.7.2",
     "i18next": "^19.0.3",
     "jquery": "^3.4.1",
-    "path2d-polyfill": "^0.4.2"
+    "path2d-polyfill": "^0.4.2",
+    "raw-loader": "^4.0.0"
   }
 }

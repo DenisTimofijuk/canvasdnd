@@ -8,14 +8,14 @@ import { TileName, LayerType } from "../layout";
 export type LayerParameters = {
     type: LayerType;
     debug: boolean;
-    grid:boolean;
+    grid: boolean;
     elements_padding_right?: number; //padding is done mannually by defining coordinates, but this parameter is still required for the grid, please use [debug = true] to get elements alligned with the grid correctly
     elements_padding_top?: number; //padding is doen mannually by defining coordinates, but this parameter is still required for the grid, please use [debug = true] to get elements alligned with the grid correctly
     elements: itemLayer;
     display_childrens?: boolean;
     display_totals?: boolean;
-    popupAvailable?:boolean;
-    delete_childrens_on_preview?:boolean;
+    popupAvailable?: boolean;
+    delete_childrens_on_preview?: boolean;
 }
 
 export type LayerDefinder = Array<LayerParameters>;
@@ -50,7 +50,7 @@ export type LabelStyle = {
 
 export type LayerElemen = {
     name: TileName;
-    id:string; //is for drop items. ID should be unique per item to have its own layer. This will be used to display dropped items.
+    id: string; //is for drop items. ID should be unique per item to have its own layer. This will be used to display dropped items.
     x: number;
     y: number;
     w: number;
@@ -396,14 +396,14 @@ function getCalendarElements(
         for (let col = 1; col <= columns; col++) {
             calendars.push({
                 name: name,
-                id: 'droppable_'+x+'_'+y,
+                id: 'droppable_' + x + '_' + y,
                 x: x,
                 y: y,
                 w: element_w,
                 h: element_h,
                 val: 0,
                 label: 'Day 1',
-                referanceID: '',
+                referanceID: 'QP4v' + col + '_' + row,
                 style: {
                     label: {
                         font: 'bold 10px arial',

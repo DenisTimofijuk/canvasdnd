@@ -38,6 +38,11 @@ export function getPossition(e: MouseEvent | TouchEvent) {
   };
 }
 
+export type AvailableDroppable = {
+  popupAvailabe: boolean;
+  element: Entity;
+}[]
+
 export function getEntityFromGrid(
   e: MouseEvent | TouchEvent,
   gridName: LayerType,
@@ -47,10 +52,7 @@ export function getEntityFromGrid(
   const x = possition.x;
   const y = possition.y;
 
-  const availableDroppable: Array<{
-    popupAvailabe: boolean;
-    element: Entity;
-  }> = [];
+  const availableDroppable: AvailableDroppable = [];
   if (grid.has(gridName)) {
     grid.get(gridName).forEach(gridLayer => {
       const droppable = gridLayer.getEntity(x, y);

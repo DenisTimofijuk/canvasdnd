@@ -4,7 +4,13 @@ import EventsListeners from './models/handlers/EventsListeners';
 import Compositor from './models/compositor';
 import Grid from './models/grid';
 import { TileName, LayerType } from './models/setup/layout';
-import { defineTiles } from './models/setup/define tiles'; 
+import { defineTiles, getTiles } from './models/setup/define tiles'; 
+import './img/CanvasDnD_2.png';
+import './img/mouse_remove.png';
+import { createInputs } from './models/test/createInputs';
+
+// var t = require('./json/tiles.json');
+// console.log(t);
 
 export class CanvasCalendar {
   placeHolder: HTMLElement;
@@ -104,7 +110,7 @@ export class CanvasCalendar {
     this.compositor.draw();
     
     // Use below to display grid for additional layers:
-    this.displayGridForDebugging();
+    // this.displayGridForDebugging();
 
     window.requestAnimationFrame(() => {
       this.update();
@@ -117,3 +123,4 @@ export class CanvasCalendar {
 }
 
 new CanvasCalendar();
+createInputs();

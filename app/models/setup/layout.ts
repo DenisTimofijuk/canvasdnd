@@ -27,7 +27,7 @@ export type LayerType =
   | string;
 
 
-let QID = 'QP4'
+export let QID = 'QP4';
 
 export function defineLayersWithElements(): LayerDefinder {
   switch (QID) {

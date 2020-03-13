@@ -90,7 +90,7 @@ export default class EventHanlder {
   ) {
     const layer = this.additionalLayers.get(name);
     layer[0].elements = [].concat(entities);
-    layer[0].debug = true
+    layer[0].debug = false
     layer[0].elements_padding_right = 5;
     layer[0].elements_padding_top = 0;
 
@@ -150,7 +150,7 @@ export default class EventHanlder {
     this.updateBufferLayer([popUp_layer_NAME, popUp_UI_layer_NAME]);
   }
 
-  removeElement(e: MouseEvent | TouchEvent, name: LayerType) {
+  removeElement(e: MouseEvent | TouchEvent, name: LayerType, callback: CallableFunction) {
     if (!this.popupActive && this.popupAvailable) {
       return;
     }
@@ -158,9 +158,11 @@ export default class EventHanlder {
     const _this = this;
     const layer = this.additionalLayers.get(name);
     const entityToRemove = this.getEntity(e, name);
+    let parentElement: Entity;
 
     entityToRemove.forEach(entity => {
       const parent = entity.element.parentEntity;
+      parentElement = parent;
       parent.removeChild(entity.element);
       layer[0].elements = [].concat(parent.childs);
 
@@ -181,9 +183,11 @@ export default class EventHanlder {
 
       _this.updateBufferLayer(['drop', name]);
     });
+
+    callback(parentElement);
   }
 
-  getDraggable(e: MouseEvent | TouchEvent, name: LayerType) {
+  get(e: MouseEvent | TouchEvent, name: LayerType) {
     if (this.popupActive && this.popupAvailable) {
       return;
     }
@@ -216,7 +220,7 @@ export default class EventHanlder {
     });
   }
 
-  appendToDroppable(e: MouseEvent | TouchEvent, name: LayerType) {
+  append(e: MouseEvent | TouchEvent, name: LayerType, callback: CallableFunction) {
     if (this.popupActive && this.popupAvailable) {
       return;
     }
@@ -256,9 +260,11 @@ export default class EventHanlder {
     this.deltaY = 0;
     this.getDraggableAvailability = true;
     this.updateBufferLayer([name, 'drop']);
+
+    callback(availableDroppable);
   }
 
-  moveItem(e: MouseEvent | TouchEvent, name: LayerType) {
+  move(e: MouseEvent | TouchEvent, name: LayerType) {
     const _this = this;
     const possition = getPossition(e);
     const x = possition.x;
@@ -278,7 +284,7 @@ export default class EventHanlder {
     }
   }
 
-  initRemove(e: MouseEvent | TouchEvent) {
+  remove(e: MouseEvent | TouchEvent, callback: CallableFunction) {
     const layerNames = [];
     if (!this.popupAvailable) {
       const drop = this.compositor.layers.get('drop');
@@ -287,10 +293,10 @@ export default class EventHanlder {
         layerNames.push(entity.id);
       })
       )
-    }else{
+    } else {
       layerNames.push('droppablePopUp_UI');
     }
     const _this = this;
-    layerNames.forEach(name => _this.removeElement(e, name))
+    layerNames.forEach(name => _this.removeElement(e, name, (parent: Entity) => callback(parent)))
   }
 }
