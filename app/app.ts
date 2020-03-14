@@ -3,11 +3,12 @@ import { SpriteSheet } from './models/SpriteSheet';
 import EventsListeners from './models/handlers/EventsListeners';
 import Compositor from './models/compositor';
 import Grid from './models/grid';
-import { TileName, LayerType } from './models/setup/layout';
+import { TileName, LayerType, QID } from './models/setup/layout';
 import { defineTiles, getTiles } from './models/setup/define tiles'; 
 import './img/CanvasDnD_2.png';
 import './img/mouse_remove.png';
 import { createInputs } from './models/test/createInputs';
+import { getNotEmptyinputs } from './models/helpers/get helpers';
 
 // var t = require('./json/tiles.json');
 // console.log(t);
@@ -45,8 +46,23 @@ export class CanvasCalendar {
       _this.initGrid();
       _this.initEventHandler();
       _this.displayGridForDebugging();
+      _this.displaySavedData();
       _this.update();
     });
+  }
+
+  displaySavedData(){
+    const inputs = getNotEmptyinputs(QID);
+    const droppables = this.grid.get('drop');
+    inputs.forEach(input => {
+      // const inputID = input.id;
+      droppables.forEach(grid => {
+        const parentEntity = grid.getEntityByRefID(input.id);
+        console.log("parentEntity", parentEntity)
+        //todo append children to parent by input values as dop event
+      })
+    })
+    
   }
 
   async initLoader() {

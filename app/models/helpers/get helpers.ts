@@ -55,7 +55,7 @@ export function getEntityFromGrid(
   const availableDroppable: AvailableDroppable = [];
   if (grid.has(gridName)) {
     grid.get(gridName).forEach(gridLayer => {
-      const droppable = gridLayer.getEntity(x, y);
+      const droppable = gridLayer.getEntityByCoord(x, y);
       if (droppable) {
         availableDroppable.push({
           popupAvailabe: gridLayer.popupAvailable,
@@ -89,4 +89,10 @@ export function cloneEntities(elements: Array<Entity>) {
   });
 
   return result;
+}
+
+
+export function getNotEmptyinputs(qID: string) {
+  const allInputs = document.querySelectorAll('input[id*=' + qID + ']');
+  return Array.from(allInputs).filter((el: HTMLInputElement) => { return el.value.length !== 0; });
 }

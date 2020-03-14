@@ -6,8 +6,8 @@ export default class Grid {
     body: Entity[][];
     w: number;
     h: number;
-    trim_x:number;
-    trim_y:number;
+    trim_x: number;
+    trim_y: number;
     PADDING_RIGHT: number;
     PADDING_TOP: number;
     popupAvailable: boolean;
@@ -37,20 +37,26 @@ export default class Grid {
         })
     }
 
-    getEntity(x:number, y:number):Entity | undefined{
+    getEntityByCoord(x: number, y: number): Entity | undefined {
         const index_x = Math.floor(x / this.w) % this.w;
         const index_y = (Math.floor(y / this.h) % this.h);
-        if(this.body[index_x]){
-            if(this.body[index_x][index_y]){
+        if (this.body[index_x]) {
+            if (this.body[index_x][index_y]) {
                 const entity = this.body[index_x][index_y];
-                if(entity.checkCoord(x, y)){
+                if (entity.checkCoord(x, y)) {
                     return entity;
                 }
             }
         }
     }
 
-    debug(ctx:CanvasRenderingContext2D){
+    getEntityByRefID(refID: string){
+        return this.entities.filter(entity => {
+            return entity.referanceID === refID;
+        })
+    }
+
+    debug(ctx: CanvasRenderingContext2D) {
         const _this = this;
         this.body.forEach((col, colindex) => {
             col.forEach((entity, rowindex) => {

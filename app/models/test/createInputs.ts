@@ -14,6 +14,12 @@ export function createInputs() {
             const input = document.createElement('input');
             input.id = QID + "v" + c + "_" + r;
             input.type = "text";
+            
+            //TESTING only
+            if(/v3/.test(input.id)){
+                input.value = "hand_1200|pen_125|pen_95|"
+            }
+            
             input.style.width = "100px";
             col.appendChild(input);
             row.appendChild(col);
