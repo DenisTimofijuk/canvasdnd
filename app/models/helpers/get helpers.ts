@@ -52,19 +52,19 @@ export function getEntityFromGrid(
   const x = possition.x;
   const y = possition.y;
 
-  const availableDroppable: AvailableDroppable = [];
+  const availableEnities: AvailableDroppable = [];
   if (grid.has(gridName)) {
     grid.get(gridName).forEach(gridLayer => {
-      const droppable = gridLayer.getEntityByCoord(x, y);
-      if (droppable) {
-        availableDroppable.push({
+      const entity = gridLayer.getEntityByCoord(x, y);
+      if (entity) {
+        availableEnities.push({
           popupAvailabe: gridLayer.popupAvailable,
-          element: droppable
+          element: entity
         });
       }
     });
   }
-  return availableDroppable;
+  return availableEnities;
 }
 
 export function getLayerTemplate(): Array<LayerElements> {

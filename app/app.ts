@@ -55,10 +55,9 @@ export class CanvasCalendar {
     const inputs = getNotEmptyinputs(QID);
     const droppables = this.grid.get('drop');
     inputs.forEach(input => {
-      // const inputID = input.id;
       droppables.forEach(grid => {
         const parentEntity = grid.getEntityByRefID(input.id);
-        console.log("parentEntity", parentEntity)
+        // console.log("parentEntity", parentEntity)
         //todo append children to parent by input values as dop event
       })
     })
