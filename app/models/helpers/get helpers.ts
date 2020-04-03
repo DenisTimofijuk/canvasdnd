@@ -38,6 +38,11 @@ export function getPossition(e: MouseEvent | TouchEvent) {
   };
 }
 
+export type AvailableDroppable = {
+  popupAvailabe: boolean;
+  element: Entity;
+}[]
+
 export function getEntityFromGrid(
   e: MouseEvent | TouchEvent,
   gridName: LayerType,
@@ -47,22 +52,19 @@ export function getEntityFromGrid(
   const x = possition.x;
   const y = possition.y;
 
-  const availableDroppable: Array<{
-    popupAvailabe: boolean;
-    element: Entity;
-  }> = [];
+  const availableEnities: AvailableDroppable = [];
   if (grid.has(gridName)) {
     grid.get(gridName).forEach(gridLayer => {
-      const droppable = gridLayer.getEntity(x, y);
-      if (droppable) {
-        availableDroppable.push({
+      const entity = gridLayer.getEntityByCoord(x, y);
+      if (entity) {
+        availableEnities.push({
           popupAvailabe: gridLayer.popupAvailable,
-          element: droppable
+          element: entity
         });
       }
     });
   }
-  return availableDroppable;
+  return availableEnities;
 }
 
 export function getLayerTemplate(): Array<LayerElements> {
@@ -87,4 +89,23 @@ export function cloneEntities(elements: Array<Entity>) {
   });
 
   return result;
+}
+
+
+export function getNotEmptyinputs(qID: string) {
+  const allInputs = document.querySelectorAll('input[id*=' + qID + ']');
+  return Array.from(allInputs).filter((el: HTMLInputElement) => { return el.value.length !== 0; });
+}
+
+export function simulateEvent(type:'mousedown'|'mouseup', entity:Entity) {
+  const e = {
+    type: type,
+    preventDefault: () => {},
+    offsetX: entity.x,
+    offsetY: entity.y,
+    button: 0,
+    buttons: 1
+  } as any as MouseEvent
+
+  return e;
 }

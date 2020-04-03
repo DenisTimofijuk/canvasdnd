@@ -7,11 +7,11 @@ export default class Compositor {
     layers: Layer;
     ctx: CanvasRenderingContext2D;
     buffers: Map<LayerType, HTMLCanvasElement>;
-    constructor(sprites: SpriteSheet, canvas: HTMLCanvasElement) {
+    constructor(sprites: SpriteSheet, canvas: HTMLCanvasElement, QID:string) {
         this.canvas = canvas;
         this.buffers = new Map();
         this.ctx = canvas.getContext('2d');
-        this.layers = createLayers(sprites);
+        this.layers = createLayers(sprites, QID);
         this.defineBuffers();
     }
 
@@ -50,7 +50,7 @@ export default class Compositor {
         this.buffers.forEach(bufferCanv => _this.ctx.drawImage(bufferCanv, 0, 0));
         
 
-        //temp hack tp have popup drawn allways the last to be on the top
+        //temp hack to have popup drawn allways the last to be on the top
         //TODO: Popup grid layer is under the popup layer now;
         // if(this.buffers.has('droppablePopUp') && this.buffers.has('droppablePopUp_UI')){
         //     this.ctx.drawImage(this.buffers.get('droppablePopUp'), 0, 0);

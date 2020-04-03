@@ -2,7 +2,6 @@ import { getLayer_QP4, LayerDefinder } from "./layouts/layout_QP4";
 import { getLayer_QP3 } from "./layouts/layout_QP3";
 import { getStyle_Entitie_Children_QP3, getStyle_Entitie_Children_QP4 } from "./style/childrens";
 
-
 export type TileName =
   | 'calendar'
   | 'pen'
@@ -26,10 +25,7 @@ export type LayerType =
   | 'droppedItems'
   | string;
 
-
-let QID = 'QP4'
-
-export function defineLayersWithElements(): LayerDefinder {
+export function defineLayersWithElements(QID:string): LayerDefinder {
   switch (QID) {
     case 'QP3':
       return getLayer_QP3();
@@ -38,7 +34,7 @@ export function defineLayersWithElements(): LayerDefinder {
   }
 }
 
-export function get_Children_Style() {
+export function get_Children_Style(QID:string) {
   switch (QID) {
     case 'QP3':
       return getStyle_Entitie_Children_QP3();

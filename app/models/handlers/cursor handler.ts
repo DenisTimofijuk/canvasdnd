@@ -58,7 +58,7 @@ function isEntityHover(
   let flag = false;
   if(grid.has(name)){
     grid.get(name).forEach(gridLayer => {
-      if (gridLayer.getEntity(x, y)) {
+      if (gridLayer.getEntityByCoord(x, y)) {
         flag = true;
       }
     });
