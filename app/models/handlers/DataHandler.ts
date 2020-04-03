@@ -15,9 +15,7 @@ export class DataHandler{
             const referanceID = parent.element.referanceID;
             let result = "";
             parent.element.childs.forEach(child => {
-                const value = child.val.toString();
-                const name = child.name
-                result += name + "_" + value + "|";
+                result += child.id + '|'
             })
             _this.save(referanceID, result)
         })

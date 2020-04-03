@@ -20,9 +20,9 @@ export type LayerElements = {
 
 export type Layer = Map<LayerType, Array<LayerElements>>;
 
-export function createLayers(sprites: SpriteSheet) {
+export function createLayers(sprites: SpriteSheet, qID:string) {
   const layers: Layer = new Map();
-  defineLayersWithElements().forEach(layer => {
+  defineLayersWithElements(qID).forEach(layer => {
     if (layers.has(layer.type)) {
       layers.get(layer.type).push(getLayerParameters(layer, sprites));
     } else {
@@ -64,7 +64,7 @@ function getLayerElements(
   layoutItems.forEach(element => {
     let name = element.name;
     let image = sprites.tiles.get(name);
-
+    
     layer.push(new Entity(image, element, entityOptions));
   });
 

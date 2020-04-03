@@ -3,15 +3,13 @@ import { SpriteSheet } from './models/SpriteSheet';
 import EventsListeners from './models/handlers/EventsListeners';
 import Compositor from './models/compositor';
 import Grid from './models/grid';
-import { TileName, LayerType, QID } from './models/setup/layout';
+import { TileName, LayerType } from './models/setup/layout';
 import { defineTiles, getTiles } from './models/setup/define tiles'; 
 import './img/CanvasDnD_2.png';
 import './img/mouse_remove.png';
 import { createInputs } from './models/test/createInputs';
-import { getNotEmptyinputs } from './models/helpers/get helpers';
-
-// var t = require('./json/tiles.json');
-// console.log(t);
+import { getNotEmptyinputs, simulateEvent } from './models/helpers/get helpers';
+import { Entity } from './models/Entity';
 
 export class CanvasCalendar {
   placeHolder: HTMLElement;
@@ -21,8 +19,11 @@ export class CanvasCalendar {
   ctx: CanvasRenderingContext2D;
   compositor: Compositor;
   grid: Map<LayerType, Array<Grid>>;
+  eventListener: EventsListeners;
+  qID: string;
 
-  constructor() {
+  constructor(qID:string) {
+    this.qID = qID;
     const placeHolderID = 'cdnd_placeHolder';
     this.canvas = document.createElement('canvas');
     this.canvas.width = 600;
@@ -34,11 +35,6 @@ export class CanvasCalendar {
     const _this = this;
 
     this.initLoader().then(async loadTile => {
-      // const tiles = (await getTiles('./json/tiles.json')).tiles;
-      // tiles.forEach(tile =>
-      //   loadTile(tile.name, tile.x, tile.y, tile.w, tile.h)
-      // );
-
       defineTiles().forEach(tile =>
         loadTile(tile.name, tile.x, tile.y, tile.w, tile.h)
       );
@@ -52,13 +48,42 @@ export class CanvasCalendar {
   }
 
   displaySavedData(){
-    const inputs = getNotEmptyinputs(QID);
+    const inputs = getNotEmptyinputs(this.qID);
     const droppables = this.grid.get('drop');
-    inputs.forEach(input => {
+    const draggable = this.grid.get('drag');
+    const _this = this;
+    inputs.forEach( input  => {
+      const htmlInput = input as HTMLInputElement;
       droppables.forEach(grid => {
         const parentEntity = grid.getEntityByRefID(input.id);
-        // console.log("parentEntity", parentEntity)
-        //todo append children to parent by input values as dop event
+        
+        if(parentEntity.length === 0){
+          console.log("Warning. Parent Element by ID was not found:", input.id);
+          return;
+        }
+
+        const savedIDs = htmlInput.value.split('|');
+        savedIDs.forEach(child_id => {
+          if(!child_id){
+            return;
+          }
+
+          let entity: Entity[] = [];
+          draggable.forEach(grid => {
+            const result = grid.getEntityByID(child_id);
+            if(result.length > 0){
+              entity = result;
+            }            
+          })
+          
+          if(entity.length === 0){
+            console.log("Warning. Child Element by ID was not found:", child_id);
+            return;
+          }
+
+          _this.eventListener.update(simulateEvent('mousedown', entity[0]));          
+          _this.eventListener.update(simulateEvent('mouseup', parentEntity[0]));
+        })
       })
     })
     
@@ -81,7 +106,7 @@ export class CanvasCalendar {
   }
 
   initCompositor() {
-    this.compositor = new Compositor(this.sprites, this.canvas);
+    this.compositor = new Compositor(this.sprites, this.canvas, this.qID);
     this.placeHolder.removeChild(this.standBy);
     this.placeHolder.appendChild(this.canvas);
     this.ctx = this.canvas.getContext('2d');
@@ -133,9 +158,11 @@ export class CanvasCalendar {
   }
 
   initEventHandler() {
-    new EventsListeners(this.canvas, this.compositor, this.grid);
+    this.eventListener = new EventsListeners(this.canvas, this.compositor, this.grid, this.qID);
   }
 }
 
-new CanvasCalendar();
-createInputs();
+createInputs('QP4');
+
+//layout.ts has hardcoded QID cases
+new CanvasCalendar('QP4');

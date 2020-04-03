@@ -56,6 +56,12 @@ export default class Grid {
         })
     }
 
+    getEntityByID(id:string) {
+        return this.entities.filter(entity => {
+            return entity.id === id;
+        })
+    }
+
     debug(ctx: CanvasRenderingContext2D) {
         const _this = this;
         this.body.forEach((col, colindex) => {

@@ -17,11 +17,12 @@ export default class EventsListeners {
   constructor(
     canvas: HTMLCanvasElement,
     compositor: Compositor,
-    grid: Map<LayerType, Array<Grid>>
+    grid: Map<LayerType, Array<Grid>>,
+    QID:string
   ) {
     this.canvas = canvas;
     this.compositor = compositor;
-    this.handler = new EventHanlder(canvas, compositor, grid);
+    this.handler = new EventHanlder(canvas, compositor, grid, QID);
     this.data = new DataHandler();
 
     this.initiate();

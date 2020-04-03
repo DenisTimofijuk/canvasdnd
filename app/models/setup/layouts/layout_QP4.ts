@@ -101,7 +101,7 @@ export function getLayer_QP4(): LayerDefinder {
             elements: [
                 {
                     name: 'pen',
-                    id: '',
+                    id: 'pen_75',
                     x: 360,
                     y: 5,
                     w: 60,
@@ -117,7 +117,7 @@ export function getLayer_QP4(): LayerDefinder {
                 },
                 {
                     name: 'pen',
-                    id: '',
+                    id: 'pen_95',
                     x: 360,
                     y: 70,
                     w: 60,
@@ -133,7 +133,7 @@ export function getLayer_QP4(): LayerDefinder {
                 },
                 {
                     name: 'pen',
-                    id: '',
+                    id: 'pen_125',
                     x: 360,
                     y: 135,
                     w: 60,
@@ -149,7 +149,7 @@ export function getLayer_QP4(): LayerDefinder {
                 },
                 {
                     name: 'hand',
-                    id: '',
+                    id: 'hand_300',
                     x: 480,
                     y: 5,
                     w: 60,
@@ -165,7 +165,7 @@ export function getLayer_QP4(): LayerDefinder {
                 },
                 {
                     name: 'hand',
-                    id: '',
+                    id: 'hand_600',
                     x: 480,
                     y: 70,
                     w: 60,
@@ -181,7 +181,7 @@ export function getLayer_QP4(): LayerDefinder {
                 },
                 {
                     name: 'hand',
-                    id: '',
+                    id: 'hand_1200',
                     x: 480,
                     y: 135,
                     w: 60,

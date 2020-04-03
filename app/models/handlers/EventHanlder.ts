@@ -29,12 +29,15 @@ export default class EventHanlder {
   deltaY: number;
   canvas: HTMLCanvasElement;
   popupAvailable: boolean;
+  qID: string;
 
   constructor(
     canvas: HTMLCanvasElement,
     compositor: Compositor,
-    grid: Map<LayerType, Array<Grid>>
+    grid: Map<LayerType, Array<Grid>>,
+    qID:string
   ) {
+    this.qID = qID;
     this.canvas = canvas;
     this.popupActive = false;
     this.compositor = compositor;
@@ -100,7 +103,8 @@ export default class EventHanlder {
       parent_y,
       parent_w,
       parent_h,
-      name !== 'droppablePopUp_UI'
+      name !== 'droppablePopUp_UI',
+      this.qID
     );
     this.grid.set(name, [new Grid(layer[0])]);
     this.updateBufferLayer([name]);

@@ -58,7 +58,7 @@ export function getLayer_QP3(): LayerDefinder {
             elements: [
                 {
                     name: 'pen',
-                    id: '',
+                    id: 'pen_75',
                     label: '75ml',
                     referanceID: '',
                     val: 75,
@@ -74,7 +74,7 @@ export function getLayer_QP3(): LayerDefinder {
                 },
                 {
                     name: 'pen',
-                    id: '',
+                    id: 'pen_95',
                     label: '95ml',
                     referanceID: '',
                     val: 95,
@@ -90,7 +90,7 @@ export function getLayer_QP3(): LayerDefinder {
                 },
                 {
                     name: 'pen',
-                    id: '',
+                    id: 'pen_125',
                     label: '125ml',
                     referanceID: '',
                     val: 125,
@@ -106,7 +106,7 @@ export function getLayer_QP3(): LayerDefinder {
                 },
                 {
                     name: 'hand',
-                    id: '',
+                    id: 'hand_300',
                     label: '300IU',
                     referanceID: '',
                     val: 300,
@@ -122,7 +122,7 @@ export function getLayer_QP3(): LayerDefinder {
                 },
                 {
                     name: 'hand',
-                    id: '',
+                    id: 'hand_600',
                     label: '600IU',
                     referanceID: '',
                     val: 600,
@@ -138,7 +138,7 @@ export function getLayer_QP3(): LayerDefinder {
                 },
                 {
                     name: 'hand',
-                    id: '',
+                    id: 'hand_1200',
                     label: '1200IU',
                     referanceID: '',
                     val: 1200,

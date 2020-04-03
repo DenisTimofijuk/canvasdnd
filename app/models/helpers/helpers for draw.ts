@@ -108,10 +108,11 @@ export function _setChildrenCoordinates(
   parent_y: number,
   parent_w: number,
   parent_h: number,
-  isForEntity: boolean
+  isForEntity: boolean,
+  qid:string
 ) {
   const UI = isForEntity
-    ? get_Children_Style()
+    ? get_Children_Style(qid)
     : getStyle_Popup_Children();
   const start_x = parent_x + UI.start_x;
   const start_y = parent_y + UI.start_y;

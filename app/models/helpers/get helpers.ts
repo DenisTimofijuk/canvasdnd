@@ -96,3 +96,16 @@ export function getNotEmptyinputs(qID: string) {
   const allInputs = document.querySelectorAll('input[id*=' + qID + ']');
   return Array.from(allInputs).filter((el: HTMLInputElement) => { return el.value.length !== 0; });
 }
+
+export function simulateEvent(type:'mousedown'|'mouseup', entity:Entity) {
+  const e = {
+    type: type,
+    preventDefault: () => {},
+    offsetX: entity.x,
+    offsetY: entity.y,
+    button: 0,
+    buttons: 1
+  } as any as MouseEvent
+
+  return e;
+}
