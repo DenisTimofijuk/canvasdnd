@@ -31,3 +31,9 @@ This project uses **webpack**.
 
 ## VsCode
 - Multi line work: ``` Crtl + Shift + L ```
+
+## TODO
+- Language Overlays;
+
+## Info
+All parameters are hardcoded. To change images, coordinates, amount of elements please use corresponding **layout_QID.ts** in **layout** folder under **setup** folder. I suggest to create your own layout file and add it to the **layout.ts** file in **style** folder under **setup** folder.
