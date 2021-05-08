@@ -30,7 +30,7 @@
     "@babel/polyfill": "^7.8.7",
     "babel-polyfill": "^6.26.0",
     "backbone": "^1.4.0",
-    "handlebars": "^4.7.5",
+    "handlebars": "^4.7.7",
     "i18next": "^19.3.4",
     "jquery": "^3.4.1",
     "path2d-polyfill": "^0.4.2",
